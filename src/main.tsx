@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { routeTree } from './routeTree.gen';
+import { FluentProvider, webLightTheme } from '@fluentui/react-components';
 
 // Create a new router instance
 const router = createRouter({ routeTree });
@@ -20,7 +21,9 @@ if (!rootElement.innerHTML) {
   const root = createRoot(rootElement);
   root.render(
     <StrictMode>
-      <RouterProvider router={router} />
+      <FluentProvider theme={webLightTheme}>
+        <RouterProvider router={router} />
+      </FluentProvider>
     </StrictMode>,
   );
 }
