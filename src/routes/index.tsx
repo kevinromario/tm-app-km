@@ -31,6 +31,7 @@ import {
 } from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useCallback, useEffect, useState } from 'react';
+import { Pagination } from '../components/Pagination';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -313,6 +314,9 @@ function Index() {
           })}
         </TableBody>
       </Table>
+      <div>
+        <Pagination totalItems={itemsMock.length} />
+      </div>
     </Container>
   );
 }
