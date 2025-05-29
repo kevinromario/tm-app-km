@@ -1,6 +1,6 @@
-import { Button } from '@fluentui/react-components';
-import { createRootRoute, Link, Outlet } from '@tanstack/react-router';
+import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools';
+import Header from '../components/Header';
 
 export const Route = createRootRoute({
   component: RootLayout,
@@ -8,30 +8,25 @@ export const Route = createRootRoute({
 
 function RootLayout() {
   return (
-    <>
-      <div style={{ columnGap: '15px', display: 'flex' }}>
-        <Link to="/">
-          {({ isActive }) => {
-            return (
-              <Button appearance={isActive ? 'primary' : 'subtle'}>
-                Dashboard
-              </Button>
-            );
+    <div>
+      <Header />
+      <div
+        style={{
+          backgroundColor: '#e8e8e8',
+          padding: '50px 70px',
+        }}
+      >
+        <div
+          style={{
+            backgroundColor: 'white',
+            borderRadius: '10px',
+            padding: '10px',
           }}
-        </Link>{' '}
-        <Link to="/setting">
-          {({ isActive }) => {
-            return (
-              <Button appearance={isActive ? 'primary' : 'subtle'}>
-                Setting
-              </Button>
-            );
-          }}
-        </Link>
+        >
+          <Outlet />
+        </div>
       </div>
-      <hr />
-      <Outlet />
       <TanStackRouterDevtools />
-    </>
+    </div>
   );
 }
