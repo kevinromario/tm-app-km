@@ -25,6 +25,7 @@ import {
 } from '@fluentui/react-icons';
 import { Pagination } from './Pagination';
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
+import type { FieldType } from '../constants';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 
@@ -35,7 +36,7 @@ type ItemType = Record<string, unknown>;
 type ColumnType = {
   name: string;
   label: string;
-  type: 'string' | 'date' | 'date-time' | 'select' | 'array';
+  type: FieldType;
   options?: Array<string>;
   required?: boolean;
 };
