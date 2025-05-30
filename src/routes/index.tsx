@@ -172,6 +172,7 @@ const columnsMock = [
 ];
 
 function Index() {
+  const [page, setPage] = useState(1);
   const [taskSelected, setTaskSelected] = useState(0);
   const [selectedRows, setSelectedRows] = useState(
     () => new Set<TableRowId>([]),
@@ -328,7 +329,11 @@ function Index() {
         </div>
       ) : null}
       <div>
-        <Pagination totalItems={itemsMock.length} />
+        <Pagination
+          totalItems={itemsMock.length}
+          page={page}
+          setPage={setPage}
+        />
       </div>
     </Container>
   );
