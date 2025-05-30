@@ -25,21 +25,13 @@ import {
 } from '@fluentui/react-icons';
 import { Pagination } from './Pagination';
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
-import type { FieldType } from '../constants';
+import type { ColumnType } from '../constants';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
 type ItemType = Record<string, unknown>;
-
-type ColumnType = {
-  name: string;
-  label: string;
-  type: FieldType;
-  options?: Array<string>;
-  required?: boolean;
-};
 
 type TableType = {
   items: ItemType[];

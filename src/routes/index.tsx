@@ -4,7 +4,8 @@ import { Title3, Button, type TableRowId } from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
-import type { FieldType } from '../constants';
+import type { ColumnType } from '../constants';
+import Filter from '../components/Filter';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -115,25 +116,25 @@ const itemsMock: ItemType[] = [
   },
 ];
 
-type ColumnType = {
-  name: string;
-  label: string;
-  type: FieldType;
-  options?: Array<string>;
-  required?: boolean;
-};
-
 const columnsMock: ColumnType[] = [
-  { name: 'title', label: 'Title', type: 'string', required: true },
+  {
+    name: 'title',
+    label: 'Title',
+    type: 'text',
+    required: true,
+    filterable: true,
+  },
   {
     name: 'description',
     label: 'Description',
-    type: 'string',
+    type: 'text',
+    filterable: true,
   },
   {
     name: 'dueDate',
     label: 'Due Date',
     type: 'date',
+    filterable: true,
   },
   {
     name: 'priority',
@@ -141,6 +142,7 @@ const columnsMock: ColumnType[] = [
     type: 'select',
     options: ['low', 'medium', 'high'],
     required: true,
+    filterable: true,
   },
   {
     name: 'status',
@@ -148,8 +150,9 @@ const columnsMock: ColumnType[] = [
     type: 'select',
     options: ['todo', 'in-progress', 'completed'],
     required: true,
+    filterable: true,
   },
-  { name: 'tags', label: 'Tags', type: 'array' },
+  { name: 'tags', label: 'Tags', type: 'array', filterable: true },
 ];
 
 function Index() {
@@ -188,6 +191,7 @@ function Index() {
 
   return (
     <Container title={renderTitle()} action={renderAction()}>
+      <Filter listColumns={columnsMock} />
       <Table
         items={itemsMock}
         listColumns={columnsMock}
