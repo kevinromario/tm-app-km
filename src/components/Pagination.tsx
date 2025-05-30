@@ -16,6 +16,7 @@ import {
   ChevronRightFilled,
   ChevronRightRegular,
 } from '@fluentui/react-icons';
+import { pageSizeList } from '../constants';
 
 type PaginationType = {
   totalItems: number;
@@ -108,12 +109,11 @@ export function Pagination({ totalItems, page, setPage }: PaginationType) {
 
           <MenuPopover>
             <MenuList>
-              <MenuItem>
-                <div onClick={() => setLimit(5)}>5 items per page</div>
-              </MenuItem>
-              <MenuItem>
-                <div onClick={() => setLimit(10)}>10 items per page</div>
-              </MenuItem>
+              {pageSizeList.map((x) => (
+                <MenuItem>
+                  <div onClick={() => setLimit(x)}>{x} items per page</div>
+                </MenuItem>
+              ))}
             </MenuList>
           </MenuPopover>
         </Menu>

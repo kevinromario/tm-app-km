@@ -4,6 +4,7 @@ import { Title3, Button, type TableRowId } from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
+import type { FieldType } from '../constants';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -117,7 +118,7 @@ const itemsMock: ItemType[] = [
 type ColumnType = {
   name: string;
   label: string;
-  type: 'string' | 'date' | 'date-time' | 'select' | 'array';
+  type: FieldType;
   options?: Array<string>;
   required?: boolean;
 };
