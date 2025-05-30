@@ -5,8 +5,9 @@ import {
   MenuList,
   MenuPopover,
   MenuTrigger,
+  Text,
 } from '@fluentui/react-components';
-import { useState } from 'react';
+import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
 
 import {
   bundleIcon,
@@ -18,14 +19,15 @@ import {
 
 type PaginationType = {
   totalItems: number;
+  page: number;
+  setPage: Dispatch<SetStateAction<number>>;
 };
 
 const PrevIcon = bundleIcon(ChevronLeftFilled, ChevronLeftRegular);
 
 const NextIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
 
-export function Pagination({ totalItems }: PaginationType) {
-  const [page, setPage] = useState(1);
+export function Pagination({ totalItems, page, setPage }: PaginationType) {
   const [limit, setLimit] = useState(10);
   const handlePrevPage = () => {
     if (page > 1) {
@@ -36,6 +38,39 @@ export function Pagination({ totalItems }: PaginationType) {
     if (totalItems >= limit) {
       setPage(page + 1);
     }
+  };
+  const handleChangePage = (x: number) => {
+    setPage(x);
+  };
+
+  const renderListPage = () => {
+    const items: Array<number | string> = [];
+    for (let index = 0; index < 5; index++) {
+      if (page - index >= 1) {
+        items.push(page - index);
+      } else {
+        break;
+      }
+    }
+    if (page > 6) {
+      items.push('...');
+    }
+    if (page > 5) {
+      items.push(1);
+    }
+    return items.reverse().map((item) => (
+      <div style={{ marginRight: 10 }}>
+        <Button
+          disabled={typeof item !== 'number'}
+          icon={<Text>{item}</Text>}
+          onClick={() => {
+            if (typeof item === 'number') {
+              handleChangePage(item);
+            }
+          }}
+        ></Button>
+      </div>
+    ));
   };
 
   return (
@@ -49,9 +84,26 @@ export function Pagination({ totalItems }: PaginationType) {
       }}
     >
       <div style={{ marginRight: 10 }}>
+        <Button
+          icon={<PrevIcon />}
+          onClick={handlePrevPage}
+          disabled={page <= 1}
+        />
+      </div>
+      {renderListPage()}
+      <div style={{ marginRight: 10 }}>
+        <Button
+          icon={<NextIcon />}
+          onClick={handleNextPage}
+          disabled={totalItems < limit}
+        />
+      </div>
+      <div style={{ marginRight: 10 }}>
         <Menu positioning={{ autoSize: true }}>
           <MenuTrigger disableButtonEnhancement>
-            <Button>{limit} items per page</Button>
+            <Button>
+              <Text>{limit} items per page</Text>
+            </Button>
           </MenuTrigger>
 
           <MenuPopover>
@@ -65,21 +117,6 @@ export function Pagination({ totalItems }: PaginationType) {
             </MenuList>
           </MenuPopover>
         </Menu>
-      </div>
-      <div style={{ marginRight: 10 }}>
-        <Button
-          icon={<PrevIcon />}
-          onClick={handlePrevPage}
-          disabled={page <= 1}
-        />
-      </div>
-      <div style={{ marginRight: 10 }}>{page}</div>
-      <div style={{ marginRight: 10 }}>
-        <Button
-          icon={<NextIcon />}
-          onClick={handleNextPage}
-          disabled={totalItems < limit}
-        />
       </div>
     </div>
   );
