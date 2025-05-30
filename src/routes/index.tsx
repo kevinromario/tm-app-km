@@ -273,47 +273,60 @@ function Index() {
             ))}
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => {
-            return (
-              <TableRow
-                key={item?.id}
-                onClick={onClick}
-                onKeyDown={onKeyDown}
-                aria-selected={selected}
-                appearance={appearance}
-              >
-                <TableSelectionCell
-                  checked={selected}
-                  checkboxIndicator={{ 'aria-label': 'Select row' }}
-                />
-                {columnsMock.map((column, index) => {
-                  const key: keyof typeof item = column.name;
-                  return (
-                    <TableCell>
-                      <TableCellLayout>{item[key]}</TableCellLayout>
-                      {columns?.length - 1 === index && (
-                        <TableCellActions>
-                          <Button
-                            icon={<EditIcon />}
-                            appearance="subtle"
-                            aria-label="Edit"
-                          />
-                          <Button
-                            icon={<DeleteIcon />}
-                            appearance="subtle"
-                            aria-label="More actions"
-                          />
-                        </TableCellActions>
-                      )}
-                    </TableCell>
-                  );
-                })}
-              </TableRow>
-            );
-          })}
-        </TableBody>
+        {rows.length ? (
+          <TableBody>
+            {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => {
+              return (
+                <TableRow
+                  key={item?.id}
+                  onClick={onClick}
+                  onKeyDown={onKeyDown}
+                  aria-selected={selected}
+                  appearance={appearance}
+                >
+                  <TableSelectionCell
+                    checked={selected}
+                    checkboxIndicator={{ 'aria-label': 'Select row' }}
+                  />
+                  {columnsMock.map((column, index) => {
+                    const key: keyof typeof item = column.name;
+                    return (
+                      <TableCell>
+                        <TableCellLayout>{item[key]}</TableCellLayout>
+                        {columns?.length - 1 === index && (
+                          <TableCellActions>
+                            <Button
+                              icon={<EditIcon />}
+                              appearance="subtle"
+                              aria-label="Edit"
+                            />
+                            <Button
+                              icon={<DeleteIcon />}
+                              appearance="subtle"
+                              aria-label="More actions"
+                            />
+                          </TableCellActions>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        ) : null}
       </Table>
+      {!rows.length ? (
+        <div
+          style={{
+            padding: 10,
+            textAlign: 'center',
+            borderBottom: '1px solid lightGray',
+          }}
+        >
+          No Data
+        </div>
+      ) : null}
       <div>
         <Pagination totalItems={itemsMock.length} />
       </div>

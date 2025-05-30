@@ -13,7 +13,7 @@ function RootLayout() {
       <div
         style={{
           backgroundColor: '#e8e8e8',
-          padding: '50px 70px',
+          padding: '30px 70px',
         }}
       >
         <div
