@@ -14,6 +14,8 @@ import {
   type TableRowId,
   type TableColumnDefinition,
   createTableColumn,
+  Skeleton,
+  SkeletonItem,
 } from '@fluentui/react-components';
 
 import {
@@ -38,6 +40,7 @@ type TableType = {
   listColumns: ColumnType[];
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
+  isLoading: boolean;
   // Optional: whether rows can be deleted
   isDeletable?: boolean;
   // Optional: whether rows can be edited
@@ -60,6 +63,7 @@ export default function Table({
   isDeletable,
   selectedRows,
   setSelectedRows,
+  isLoading,
 }: TableType) {
   const columns: TableColumnDefinition<ItemType>[] = listColumns.map((item) => {
     return createTableColumn<ItemType>({
@@ -111,6 +115,18 @@ export default function Table({
     },
     [toggleAllRows],
   );
+
+  if (isLoading) {
+    return (
+      <Skeleton
+        animation="pulse"
+        aria-label="Loading Content"
+        style={{ marginTop: 10 }}
+      >
+        <SkeletonItem size={120} />
+      </Skeleton>
+    );
+  }
 
   return (
     <>
