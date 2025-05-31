@@ -23,6 +23,7 @@ import Filter from '../components/Filter';
 import Dialog from '../components/Dialog';
 import { useGetTasksList } from '../hooks/useGetTasksList';
 import { useAddNewTask } from '../hooks/useAddNewTask';
+import { useDeleteTask } from '../hooks/useDeleteTask';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -189,6 +190,9 @@ function Index() {
     error: errorAddNewTask,
   } = useAddNewTask();
 
+  const { mutateAsync: deleteTask, isPending: loadingDeleteTask } =
+    useDeleteTask();
+
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -210,6 +214,20 @@ function Index() {
     fetchNextPage();
   };
 
+  const handleDeleteRow = async (taskId?: string) => {
+    try {
+      if (!taskId) {
+        throw new Error('Task Id not found');
+      }
+      await deleteTask({ taskId });
+      notify('Successfully Delete Task', 'success');
+      handleResetSelected();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      notify(error.message, 'error');
+    }
+  };
+
   const handleSubmitNewTask = async (props: FormDataType) => {
     try {
       await addTask({
@@ -219,7 +237,7 @@ function Index() {
         updatedAt: new Date().toISOString(),
       });
       setIsAddTask(false);
-      notify();
+      notify('Successfully Create a New Task', 'success');
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // do nothing
@@ -228,13 +246,16 @@ function Index() {
 
   const toasterId = useId('toaster');
   const { dispatchToast } = useToastController(toasterId);
-  const notify = () =>
+  const notify = (
+    message: string,
+    intent: 'error' | 'info' | 'warning' | 'success',
+  ) =>
     dispatchToast(
       <Toast>
-        <ToastTitle>Success</ToastTitle>
-        <ToastBody>Successfully Create a New Task</ToastBody>
+        <ToastTitle>{intent}</ToastTitle>
+        <ToastBody>{message}</ToastBody>
       </Toast>,
-      { intent: 'success', position: 'top-end' },
+      { intent, position: 'top-end' },
     );
 
   const handleResetSelected = () => {
@@ -282,6 +303,7 @@ function Index() {
         setPage={setPage}
         isEditable
         isDeletable
+        handleDeleteRow={handleDeleteRow}
         isMultiSelect
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
@@ -290,6 +312,7 @@ function Index() {
         hasNextPage={hasNextPage}
         handleFetchNextPage={handleFetchNextPage}
         isFetchingNextPage={isFetchingNextPage}
+        loadingDeleteRow={loadingDeleteTask}
       />
     </Container>
   );
