@@ -18,6 +18,7 @@ import {
   SkeletonItem,
   MessageBar,
   MessageBarBody,
+  Spinner,
 } from '@fluentui/react-components';
 
 import {
@@ -27,7 +28,7 @@ import {
   DeleteFilled,
   bundleIcon,
 } from '@fluentui/react-icons';
-import { Pagination } from './Pagination';
+
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
 import type { ColumnType } from '../constants';
 
@@ -40,9 +41,16 @@ type ItemType = Record<string, unknown>;
 type TableType = {
   items: ItemType[];
   listColumns: ColumnType[];
+  // Required for pagination Offset-based
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
+  //
   isLoading: boolean;
+  // Required for pagination Cursor-based
+  hasNextPage: boolean;
+  handleFetchNextPage: () => void;
+  isFetchingNextPage: boolean;
+  //
   error?: string;
   // Optional: whether rows can be deleted
   isDeletable?: boolean;
@@ -59,8 +67,6 @@ type TableType = {
 export default function Table({
   items,
   listColumns,
-  page,
-  setPage,
   isMultiSelect,
   isEditable,
   isDeletable,
@@ -68,6 +74,9 @@ export default function Table({
   setSelectedRows,
   isLoading,
   error,
+  hasNextPage,
+  handleFetchNextPage,
+  isFetchingNextPage,
 }: TableType) {
   const columns: TableColumnDefinition<ItemType>[] = listColumns.map((item) => {
     return createTableColumn<ItemType>({
@@ -227,9 +236,26 @@ export default function Table({
           No Data
         </div>
       ) : null}
-      <div>
-        <Pagination totalItems={items.length} page={page} setPage={setPage} />
-      </div>
+      {hasNextPage && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginTop: 10,
+            marginRight: 10,
+          }}
+        >
+          <Button
+            appearance="primary"
+            isLoading={isFetchingNextPage}
+            icon={isFetchingNextPage ? <Spinner size="tiny" /> : null}
+            onClick={() => handleFetchNextPage()}
+          >
+            {isFetchingNextPage ? 'Loading...' : 'Load More'}
+          </Button>
+        </div>
+      )}
     </>
   );
 }
