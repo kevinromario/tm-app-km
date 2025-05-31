@@ -41,11 +41,13 @@ type ItemType = Record<string, unknown>;
 type TableType = {
   items: ItemType[];
   listColumns: ColumnType[];
+  handleDeleteRow?: (id?: string) => void;
   // Required for pagination Offset-based
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   //
   isLoading: boolean;
+  loadingDeleteRow: boolean;
   // Required for pagination Cursor-based
   hasNextPage: boolean;
   handleFetchNextPage: () => void;
@@ -77,6 +79,8 @@ export default function Table({
   hasNextPage,
   handleFetchNextPage,
   isFetchingNextPage,
+  handleDeleteRow,
+  loadingDeleteRow,
 }: TableType) {
   const columns: TableColumnDefinition<ItemType>[] = listColumns.map((item) => {
     return createTableColumn<ItemType>({
@@ -209,9 +213,20 @@ export default function Table({
                               )}
                               {isDeletable && (
                                 <Button
-                                  icon={<DeleteIcon />}
+                                  disable={loadingDeleteRow}
+                                  icon={
+                                    loadingDeleteRow ? (
+                                      <Spinner size="tiny" />
+                                    ) : (
+                                      <DeleteIcon />
+                                    )
+                                  }
                                   appearance="subtle"
                                   aria-label="More actions"
+                                  onClick={() =>
+                                    handleDeleteRow &&
+                                    handleDeleteRow(item?.id as string)
+                                  }
                                 />
                               )}
                             </TableCellActions>
