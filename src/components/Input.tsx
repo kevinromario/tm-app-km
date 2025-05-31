@@ -15,16 +15,21 @@ import {
   Label,
 } from '@fluentui/react-components';
 import { useState, type ChangeEvent } from 'react';
+import type { FieldType } from '../constants';
+
+type HandleChangeType = (
+  name: string,
+  value: string | number | boolean | string[] | null,
+  type: FieldType,
+) => void;
 
 type InputTextType = InputProps & {
   placeholder?: string;
   inputId: string;
   required: boolean;
   showLabel: boolean;
-  handleChange: (
-    name: string,
-    value: string | number | boolean | string[] | null,
-  ) => void;
+  handleChange: HandleChangeType;
+  type: FieldType;
 };
 
 type InputTextAreaType = TextareaProps & {
@@ -32,10 +37,8 @@ type InputTextAreaType = TextareaProps & {
   inputId: string;
   required: boolean;
   showLabel: boolean;
-  handleChange: (
-    name: string,
-    value: string | number | boolean | string[] | null,
-  ) => void;
+  handleChange: HandleChangeType;
+  type: FieldType;
 };
 
 type InputSelectType = {
@@ -44,20 +47,16 @@ type InputSelectType = {
   options: string[];
   required: boolean;
   showLabel: boolean;
-  handleChange: (
-    name: string,
-    value: string | number | boolean | string[] | null,
-  ) => void;
+  handleChange: HandleChangeType;
+  type: FieldType;
 };
 
 type InputTagType = {
   inputId: string;
   required: boolean;
   showLabel: boolean;
-  handleChange: (
-    name: string,
-    value: string | number | boolean | string[] | null,
-  ) => void;
+  handleChange: HandleChangeType;
+  type: FieldType;
 };
 
 export function InputText(props: InputTextType) {
@@ -69,12 +68,13 @@ export function InputText(props: InputTextType) {
         </Label>
       )}
       <Input
-        {...props}
         id={props.inputId}
         name={props.inputId}
-        type="text"
+        type={props.type}
         placeholder={props.placeholder}
-        onChange={(e) => props.handleChange(props.inputId, e.target.value)}
+        onChange={(e) =>
+          props.handleChange(props.inputId, e.target.value, props.type)
+        }
       />
     </>
   );
@@ -89,12 +89,13 @@ export function InputEmail(props: InputTextType) {
         </Label>
       )}
       <Input
-        {...props}
         id={props.inputId}
         name={props.inputId}
-        type="email"
+        type={props.type}
         placeholder={props.placeholder}
-        onChange={(e) => props.handleChange(props.inputId, e.target.value)}
+        onChange={(e) =>
+          props.handleChange(props.inputId, e.target.value, props.type)
+        }
       />
     </>
   );
@@ -112,9 +113,11 @@ export function InputDate(props: InputTextType) {
         {...props}
         id={props.inputId}
         name={props.inputId}
-        type="date"
+        type={props.type}
         placeholder={props.placeholder}
-        onChange={(e) => props.handleChange(props.inputId, e.target.value)}
+        onChange={(e) =>
+          props.handleChange(props.inputId, e.target.value, props.type)
+        }
       />
     </>
   );
@@ -132,9 +135,11 @@ export function InputDateTime(props: InputTextType) {
         {...props}
         id={props.inputId}
         name={props.inputId}
-        type="datetime-local"
+        type={props.type}
         placeholder={props.placeholder}
-        onChange={(e) => props.handleChange(props.inputId, e.target.value)}
+        onChange={(e) =>
+          props.handleChange(props.inputId, e.target.value, props.type)
+        }
       />
     </>
   );
@@ -149,7 +154,6 @@ export function InputSelect(props: InputSelectType) {
         </Label>
       )}
       <Dropdown
-        {...props}
         id={props.inputId}
         name={props.inputId}
         clearable
@@ -157,7 +161,9 @@ export function InputSelect(props: InputSelectType) {
       >
         {props.options.map((option) => (
           <Option
-            onClick={() => props.handleChange(props.inputId, option)}
+            onClick={() =>
+              props.handleChange(props.inputId, option, props.type)
+            }
             key={option}
           >
             {option}
@@ -177,9 +183,10 @@ export function InputTextArea(props: InputTextAreaType) {
         </Label>
       )}
       <Textarea
-        {...props}
         name={props.inputId}
-        onChange={(e) => props.handleChange(props.inputId, e.target.value)}
+        onChange={(e) =>
+          props.handleChange(props.inputId, e.target.value, props.type)
+        }
       />
     </>
   );
@@ -201,6 +208,7 @@ export function InputTag(props: InputTagType) {
         props.handleChange(
           props.inputId,
           curr.includes(inputValue) ? curr : [...curr, inputValue],
+          props.type,
         );
         return curr.includes(inputValue) ? curr : [...curr, inputValue];
       });

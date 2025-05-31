@@ -54,6 +54,7 @@ export default function Filter(props: FilterType) {
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
+              type="email"
             />
           );
         }
@@ -65,10 +66,11 @@ export default function Filter(props: FilterType) {
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
+              type="date"
             />
           );
         }
-        if (column.type === 'date-time') {
+        if (column.type === 'datetime-local') {
           return (
             <InputDateTime
               inputId={column.name}
@@ -89,6 +91,7 @@ export default function Filter(props: FilterType) {
               placeholder={`Select ${column.label}`}
               options={column.options || []}
               handleChange={handleChange}
+              type="select"
             />
           );
         }
@@ -100,6 +103,7 @@ export default function Filter(props: FilterType) {
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
+              type="text"
             />
           );
         }
@@ -111,6 +115,7 @@ export default function Filter(props: FilterType) {
             showLabel={false}
             placeholder={`Input ${column.label}`}
             handleChange={handleChange}
+            type="text"
           />
         );
       })}
