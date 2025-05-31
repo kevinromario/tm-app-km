@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import Table from '../components/Table';
 import type { ColumnType } from '../constants';
 import Filter from '../components/Filter';
+import Dialog from '../components/Dialog';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -127,7 +128,7 @@ const columnsMock: ColumnType[] = [
   {
     name: 'description',
     label: 'Description',
-    type: 'text',
+    type: 'text-area',
     filterable: true,
   },
   {
@@ -157,6 +158,7 @@ const columnsMock: ColumnType[] = [
 
 function Index() {
   const [page, setPage] = useState(1);
+  const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
   const [selectedRows, setSelectedRows] = useState(
     () => new Set<TableRowId>([]),
@@ -186,7 +188,15 @@ function Index() {
         </div>
       );
     }
-    return <Button appearance="primary">Add Task</Button>;
+    return (
+      <Dialog
+        isOpen={isAddTask}
+        setIsOpen={setIsAddTask}
+        btnText="Add New Task"
+        title="Add New Task"
+        listColumns={columnsMock}
+      />
+    );
   };
 
   return (
