@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery, type InfiniteData, type QueryFunctionContext } from '@tanstack/react-query';
 import axios from '../api/axios';
 import { organizationId, type FormDataType } from '../constants';
 
@@ -7,16 +7,23 @@ type ResQueryType = {
   continuationToken?: string | null;
 };
 
-const fetchTasks = async ({ pageParam = '' }): Promise<ResQueryType> => {
+type DynamicFilterParams = Record<string, string | string[] | Date | number | boolean | undefined | null>;
+
+
+const fetchTasks = async (
+  context: QueryFunctionContext<[string, DynamicFilterParams], string>
+): Promise<ResQueryType> => {
+  const { pageParam = '', queryKey } = context;
+  const [, filters] = queryKey;
   const response = await axios.get('/GetTasks', {
-    params: { continuationToken: pageParam, organizationId: organizationId },
+    params: { continuationToken: pageParam, organizationId, ...filters },
   });
   return response.data;
 };
 
-export const useGetTasksList = () => {
-  const query = useInfiniteQuery({
-    queryKey: ['getTasks'],
+export const useGetTasksList = (filters: DynamicFilterParams) => {
+  const query = useInfiniteQuery<ResQueryType, Error, InfiniteData<ResQueryType>, [string, DynamicFilterParams], string>({
+    queryKey: ['getTasks', filters],
     queryFn: fetchTasks,
     initialPageParam: '',
     getNextPageParam: (lastPage) => lastPage.continuationToken || undefined,
