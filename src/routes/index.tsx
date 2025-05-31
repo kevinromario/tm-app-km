@@ -204,7 +204,12 @@ function Index() {
 
   const handleSubmitNewTask = async (props: FormDataType) => {
     try {
-      await addTask({ ...props, organizationId });
+      await addTask({
+        ...props,
+        organizationId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
       setIsAddTask(false);
       notify();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -50,7 +50,7 @@ export default function Dialog(props: DialogType) {
     let parsedValue: string | number | boolean | string[] | Date | null = value;
 
     if (type === 'date' || type === 'datetime-local') {
-      parsedValue = value ? new Date(value as string) : null;
+      parsedValue = value ? new Date(value as string).toISOString() : null;
     }
 
     setFormData((prev) => ({
@@ -60,8 +60,13 @@ export default function Dialog(props: DialogType) {
   };
   const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
-
-    props.onSubmit(formData);
+    try {
+      props.onSubmit(formData);
+      setFormData({});
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      //
+    }
   };
   return (
     <DialogContainer open={props.isOpen}>
