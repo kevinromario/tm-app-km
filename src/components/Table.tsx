@@ -42,6 +42,7 @@ type TableType = {
   items: ItemType[];
   listColumns: ColumnType[];
   handleDeleteRow?: (id?: string) => void;
+  handleEditRow?: (index: number) => void;
   // Required for pagination Offset-based
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
@@ -81,6 +82,7 @@ export default function Table({
   isFetchingNextPage,
   handleDeleteRow,
   loadingDeleteRow,
+  handleEditRow,
 }: TableType) {
   const columns: TableColumnDefinition<ItemType>[] = listColumns.map((item) => {
     return createTableColumn<ItemType>({
@@ -210,6 +212,9 @@ export default function Table({
                                     icon={<EditIcon />}
                                     appearance="subtle"
                                     aria-label="Edit"
+                                    onClick={() =>
+                                      handleEditRow && handleEditRow(idx)
+                                    }
                                   />
                                 )}
                                 {isDeletable && (

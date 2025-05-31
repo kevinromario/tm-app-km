@@ -1,10 +1,9 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from '../api/axios';
-import { organizationId } from '../constants';
+import { organizationId, type FormDataType } from '../constants';
 
-type TaskType = Record<string, unknown>;
 type ResQueryType = {
-  tasks: TaskType[];
+  tasks: FormDataType[];
   continuationToken?: string | null;
 };
 

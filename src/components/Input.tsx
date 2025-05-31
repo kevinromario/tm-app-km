@@ -14,8 +14,9 @@ import {
   Avatar,
   Label,
 } from '@fluentui/react-components';
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useState, type ChangeEvent } from 'react';
 import type { FieldType } from '../constants';
+import { format } from 'date-fns';
 
 type HandleChangeType = (
   name: string,
@@ -49,6 +50,7 @@ type InputSelectType = {
   showLabel: boolean;
   handleChange: HandleChangeType;
   type: FieldType;
+  defaultValue?: string;
 };
 
 type InputTagType = {
@@ -57,6 +59,7 @@ type InputTagType = {
   showLabel: boolean;
   handleChange: HandleChangeType;
   type: FieldType;
+  defaultValue?: string[];
 };
 
 export function InputText(props: InputTextType) {
@@ -69,6 +72,7 @@ export function InputText(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
+        defaultValue={props.defaultValue}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -90,6 +94,7 @@ export function InputEmail(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
+        defaultValue={props.defaultValue}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -102,6 +107,8 @@ export function InputEmail(props: InputTextType) {
 }
 
 export function InputDate(props: InputTextType) {
+  const formatted =
+    props.defaultValue && format(new Date(props.defaultValue), 'yyyy-MM-dd');
   return (
     <>
       {props.showLabel && (
@@ -110,8 +117,8 @@ export function InputDate(props: InputTextType) {
         </Label>
       )}
       <Input
-        {...props}
         id={props.inputId}
+        defaultValue={formatted}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -124,6 +131,10 @@ export function InputDate(props: InputTextType) {
 }
 
 export function InputDateTime(props: InputTextType) {
+  const formatted =
+    props.defaultValue &&
+    format(new Date(props.defaultValue), 'YYYY-MM-DDTHH:mm');
+
   return (
     <>
       {props.showLabel && (
@@ -132,8 +143,8 @@ export function InputDateTime(props: InputTextType) {
         </Label>
       )}
       <Input
-        {...props}
         id={props.inputId}
+        defaultValue={formatted}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -154,6 +165,7 @@ export function InputSelect(props: InputSelectType) {
         </Label>
       )}
       <Dropdown
+        defaultValue={props.defaultValue}
         id={props.inputId}
         name={props.inputId}
         clearable
@@ -184,6 +196,7 @@ export function InputTextArea(props: InputTextAreaType) {
       )}
       <Textarea
         name={props.inputId}
+        defaultValue={props.defaultValue}
         onChange={(e) =>
           props.handleChange(props.inputId, e.target.value, props.type)
         }
@@ -214,6 +227,12 @@ export function InputTag(props: InputTagType) {
       });
     }
   };
+
+  useEffect(() => {
+    if (props.defaultValue) {
+      setSelectedOptions(props.defaultValue);
+    }
+  }, [props.defaultValue]);
 
   return (
     <>
