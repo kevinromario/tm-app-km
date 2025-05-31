@@ -22,21 +22,28 @@ type PaginationType = {
   totalItems: number;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
+  pageSize: number;
+  setPageSize: Dispatch<SetStateAction<number>>;
 };
 
 const PrevIcon = bundleIcon(ChevronLeftFilled, ChevronLeftRegular);
 
 const NextIcon = bundleIcon(ChevronRightFilled, ChevronRightRegular);
 
-export function Pagination({ totalItems, page, setPage }: PaginationType) {
-  const [limit, setLimit] = useState(10);
+export function Pagination({
+  totalItems,
+  page,
+  setPage,
+  pageSize,
+  setPageSize,
+}: PaginationType) {
   const handlePrevPage = () => {
     if (page > 1) {
       setPage(page - 1);
     }
   };
   const handleNextPage = () => {
-    if (totalItems >= limit) {
+    if (totalItems >= pageSize) {
       setPage(page + 1);
     }
   };
@@ -96,14 +103,14 @@ export function Pagination({ totalItems, page, setPage }: PaginationType) {
         <Button
           icon={<NextIcon />}
           onClick={handleNextPage}
-          disabled={totalItems < limit}
+          disabled={totalItems < pageSize}
         />
       </div>
       <div style={{ marginRight: 10 }}>
         <Menu positioning={{ autoSize: true }}>
           <MenuTrigger disableButtonEnhancement>
             <Button>
-              <Text>{limit} items per page</Text>
+              <Text>{pageSize} items per page</Text>
             </Button>
           </MenuTrigger>
 
@@ -111,7 +118,7 @@ export function Pagination({ totalItems, page, setPage }: PaginationType) {
             <MenuList>
               {pageSizeList.map((x) => (
                 <MenuItem>
-                  <div onClick={() => setLimit(x)}>{x} items per page</div>
+                  <div onClick={() => setPageSize(x)}>{x} items per page</div>
                 </MenuItem>
               ))}
             </MenuList>

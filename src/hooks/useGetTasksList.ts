@@ -1,19 +1,36 @@
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from '../api/axios';
 import { organizationId } from '../constants';
 
 type TaskType = Record<string, unknown>;
+type ResQueryType = {
+  tasks: TaskType[];
+  continuationToken?: string | null;
+};
 
-const fetchTasks = async (): Promise<TaskType[]> => {
-  const response = await axios.get<TaskType[]>('/GetTasks', {params: {organizationId: organizationId}});
+const fetchTasks = async ({ pageParam = '' }): Promise<ResQueryType> => {
+  const response = await axios.get('/GetTasks', {
+    params: { continuationToken: pageParam, organizationId: organizationId },
+  });
   return response.data;
 };
 
 export const useGetTasksList = () => {
-  return useQuery({
+  const query = useInfiniteQuery({
     queryKey: ['getTasks'],
     queryFn: fetchTasks,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    retry: false,
+    initialPageParam: '',
+    getNextPageParam: (lastPage) => lastPage.continuationToken || undefined,
+    retry: false
   });
+
+  const tasksList =
+    query.data?.pages.flatMap((page) => {
+      return page.tasks;
+    }) ?? [];
+
+  return {
+    ...query,
+    tasksList,
+  };
 };

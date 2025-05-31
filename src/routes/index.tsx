@@ -174,17 +174,21 @@ const columnsMock: ColumnType[] = [
 
 function Index() {
   const {
-    data: taskList,
+    tasksList,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
     isLoading: isLoadingFetchData,
     error: errorFetchTaskList,
   } = useGetTasksList();
+
   const {
     mutateAsync: addTask,
     isPending,
     isSuccess,
     error: errorAddNewTask,
   } = useAddNewTask();
-  console.log(errorAddNewTask);
+
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -201,6 +205,10 @@ function Index() {
       console.log('berhasil');
     }
   }, [isSuccess]);
+
+  const handleFetchNextPage = () => {
+    fetchNextPage();
+  };
 
   const handleSubmitNewTask = async (props: FormDataType) => {
     try {
@@ -268,7 +276,7 @@ function Index() {
       <Toaster toasterId={toasterId} />
       <Filter listColumns={columnsMock} />
       <Table
-        items={taskList || []}
+        items={tasksList || []}
         listColumns={columnsMock}
         page={page}
         setPage={setPage}
@@ -279,6 +287,9 @@ function Index() {
         setSelectedRows={setSelectedRows}
         isLoading={isLoadingFetchData}
         error={errorFetchTaskList?.message}
+        hasNextPage={hasNextPage}
+        handleFetchNextPage={handleFetchNextPage}
+        isFetchingNextPage={isFetchingNextPage}
       />
     </Container>
   );
