@@ -1,6 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { Title3, Button, type TableRowId } from '@fluentui/react-components';
+import {
+  Title3,
+  Button,
+  type TableRowId,
+  useId,
+  useToastController,
+  Toast,
+  ToastTitle,
+  ToastBody,
+  Toaster,
+} from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
@@ -196,11 +206,23 @@ function Index() {
     try {
       await addTask({ ...props, organizationId });
       setIsAddTask(false);
+      notify();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // do nothing
     }
   };
+
+  const toasterId = useId('toaster');
+  const { dispatchToast } = useToastController(toasterId);
+  const notify = () =>
+    dispatchToast(
+      <Toast>
+        <ToastTitle>Success</ToastTitle>
+        <ToastBody>Successfully Create a New Task</ToastBody>
+      </Toast>,
+      { intent: 'success', position: 'top-end' },
+    );
 
   const handleResetSelected = () => {
     setSelectedRows(() => new Set<TableRowId>([]));
@@ -238,6 +260,7 @@ function Index() {
 
   return (
     <Container title={renderTitle()} action={renderAction()}>
+      <Toaster toasterId={toasterId} />
       <Filter listColumns={columnsMock} />
       <Table
         items={taskList || []}
