@@ -163,7 +163,11 @@ const columnsMock: ColumnType[] = [
 ];
 
 function Index() {
-  const { data: taskList, isLoading, error } = useGetTasksList();
+  const {
+    data: taskList,
+    isLoading: isLoadingFetchData,
+    error,
+  } = useGetTasksList();
   const {
     mutateAsync: addTask,
     isPending,
@@ -235,7 +239,7 @@ function Index() {
     <Container title={renderTitle()} action={renderAction()}>
       <Filter listColumns={columnsMock} />
       <Table
-        items={taskList}
+        items={taskList || []}
         listColumns={columnsMock}
         page={page}
         setPage={setPage}
@@ -244,6 +248,7 @@ function Index() {
         isMultiSelect
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
+        isLoading={isLoadingFetchData}
       />
     </Container>
   );
