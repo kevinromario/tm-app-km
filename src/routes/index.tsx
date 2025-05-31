@@ -18,6 +18,7 @@ import Table from '../components/Table';
 import {
   organizationId,
   type ColumnType,
+  type FilterDataType,
   type FormDataType,
 } from '../constants';
 import Filter from '../components/Filter';
@@ -72,7 +73,7 @@ const columnsMock: ColumnType[] = [
 ];
 
 function Index() {
-  const [filter, setFilter] = useState<FormDataType>({});
+  const [filter, setFilter] = useState<FilterDataType>({});
   const {
     tasksList,
     fetchNextPage,
@@ -117,7 +118,7 @@ function Index() {
     fetchNextPage();
   };
 
-  const handleSubmitFilter = (props: FormDataType) => {
+  const handleSubmitFilter = (props: FilterDataType) => {
     setFilter(props);
   };
 

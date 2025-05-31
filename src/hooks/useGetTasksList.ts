@@ -7,7 +7,12 @@ type ResQueryType = {
   continuationToken?: string | null;
 };
 
-type DynamicFilterParams = Record<string, string | string[] | Date | number | boolean | undefined | null>;
+type FilterField = {
+  value: string | string[] | Date | number | boolean | null;
+  type: string;
+};
+
+type DynamicFilterParams = Record<string, FilterField>;
 
 
 const fetchTasks = async (
@@ -16,7 +21,7 @@ const fetchTasks = async (
   const { pageParam = '', queryKey } = context;
   const [, filters] = queryKey;
   const response = await axios.get('/GetTasks', {
-    params: { continuationToken: pageParam, organizationId, ...filters },
+    params: { continuationToken: pageParam, organizationId, filters: JSON.stringify(filters) },
   });
   return response.data;
 };

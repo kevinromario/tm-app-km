@@ -1,5 +1,10 @@
 import { Button } from '@fluentui/react-components';
-import type { ColumnType, FieldType, FormDataType } from '../constants';
+import type {
+  ColumnType,
+  FieldType,
+  FilterDataType,
+  FormDataType,
+} from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -11,7 +16,7 @@ import { useState, type FormEvent } from 'react';
 
 type FilterType = {
   listColumns: ColumnType[];
-  onSubmit: (props: FormDataType) => void;
+  onSubmit: (props: FilterDataType) => void;
 };
 
 export default function Filter(props: FilterType) {
@@ -35,7 +40,20 @@ export default function Filter(props: FilterType) {
   const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    props.onSubmit(formData);
+    const filterData: FilterDataType = {};
+
+    for (const [key, value] of Object.entries(formData)) {
+      const column = props.listColumns.find((col) => col.name === key);
+
+      if (column) {
+        filterData[key] = {
+          value,
+          type: column.type,
+        };
+      }
+    }
+
+    props.onSubmit(filterData);
   };
 
   return (
