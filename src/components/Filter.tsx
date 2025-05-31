@@ -1,5 +1,10 @@
 import { Button } from '@fluentui/react-components';
-import type { ColumnType, FormDataType } from '../constants';
+import type {
+  ColumnType,
+  FieldType,
+  FilterDataType,
+  FormDataType,
+} from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -11,6 +16,7 @@ import { useState, type FormEvent } from 'react';
 
 type FilterType = {
   listColumns: ColumnType[];
+  onSubmit: (props: FilterDataType) => void;
 };
 
 export default function Filter(props: FilterType) {
@@ -19,17 +25,35 @@ export default function Filter(props: FilterType) {
   const handleChange = (
     name: string,
     value: string | number | boolean | string[] | null,
+    type: FieldType,
   ) => {
+    let parsedValue: string | number | boolean | string[] | Date | null = value;
+
+    if (type === 'date' || type === 'datetime-local') {
+      parsedValue = value ? new Date(value as string).toISOString() : null;
+    }
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: parsedValue,
     }));
   };
   const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    console.log(formData);
-    alert('form submitted!');
+    const filterData: FilterDataType = {};
+
+    for (const [key, value] of Object.entries(formData)) {
+      const column = props.listColumns.find((col) => col.name === key);
+
+      if (column) {
+        filterData[key] = {
+          value,
+          type: column.type,
+        };
+      }
+    }
+
+    props.onSubmit(filterData);
   };
 
   return (
@@ -49,6 +73,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'email') {
           return (
             <InputEmail
+              value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
               required={false}
@@ -62,6 +87,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'date') {
           return (
             <InputDate
+              value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
               required={false}
@@ -75,6 +101,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'datetime-local') {
           return (
             <InputDateTime
+              value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
               required={false}
@@ -88,6 +115,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'select') {
           return (
             <InputSelect
+              value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
               required={false}
@@ -102,6 +130,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'text-area') {
           return (
             <InputText
+              value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
               required={false}
@@ -115,6 +144,7 @@ export default function Filter(props: FilterType) {
 
         return (
           <InputText
+            value={(formData[column.name] as string) ?? ''}
             key={column.name}
             inputId={column.name}
             required={false}
@@ -130,10 +160,19 @@ export default function Filter(props: FilterType) {
           gridColumn: '1 / -1',
           display: 'flex',
           justifyContent: 'flex-start',
+          gap: 10,
         }}
       >
         <Button type="submit" appearance="primary">
           Search
+        </Button>
+        <Button
+          onClick={() => {
+            setFormData({});
+            props.onSubmit({});
+          }}
+        >
+          Reset
         </Button>
       </div>
     </form>

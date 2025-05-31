@@ -18,6 +18,7 @@ import Table from '../components/Table';
 import {
   organizationId,
   type ColumnType,
+  type FilterDataType,
   type FormDataType,
 } from '../constants';
 import Filter from '../components/Filter';
@@ -72,6 +73,7 @@ const columnsMock: ColumnType[] = [
 ];
 
 function Index() {
+  const [filter, setFilter] = useState<FilterDataType>({});
   const {
     tasksList,
     fetchNextPage,
@@ -79,7 +81,7 @@ function Index() {
     isFetchingNextPage,
     isLoading: isLoadingFetchData,
     error: errorFetchTaskList,
-  } = useGetTasksList();
+  } = useGetTasksList(filter);
 
   const {
     mutateAsync: addTask,
@@ -114,6 +116,10 @@ function Index() {
 
   const handleFetchNextPage = () => {
     fetchNextPage();
+  };
+
+  const handleSubmitFilter = (props: FilterDataType) => {
+    setFilter(props);
   };
 
   const handleBulkDeleteTasks = async () => {
@@ -264,7 +270,7 @@ function Index() {
   return (
     <Container title={renderTitle()} action={renderAction()}>
       <Toaster toasterId={toasterId} />
-      <Filter listColumns={columnsMock} />
+      <Filter onSubmit={handleSubmitFilter} listColumns={columnsMock} />
       <Table
         items={tasksList || []}
         listColumns={columnsMock}

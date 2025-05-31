@@ -51,6 +51,7 @@ type InputSelectType = {
   handleChange: HandleChangeType;
   type: FieldType;
   defaultValue?: string;
+  value?: string;
 };
 
 type InputTagType = {
@@ -60,9 +61,18 @@ type InputTagType = {
   handleChange: HandleChangeType;
   type: FieldType;
   defaultValue?: string[];
+  value?: string;
 };
 
 export function InputText(props: InputTextType) {
+  const inputProps: { value?: string; defaultValue?: string } = {};
+
+  if (props.value !== undefined) {
+    inputProps.value = props.value;
+  } else if (props.defaultValue !== undefined) {
+    inputProps.defaultValue = props.defaultValue;
+  }
+
   return (
     <>
       {props.showLabel && (
@@ -72,7 +82,7 @@ export function InputText(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        defaultValue={props.defaultValue}
+        {...inputProps}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -85,6 +95,14 @@ export function InputText(props: InputTextType) {
 }
 
 export function InputEmail(props: InputTextType) {
+  const inputProps: { value?: string; defaultValue?: string } = {};
+
+  if (props.value !== undefined) {
+    inputProps.value = props.value;
+  } else if (props.defaultValue !== undefined) {
+    inputProps.defaultValue = props.defaultValue;
+  }
+
   return (
     <>
       {props.showLabel && (
@@ -94,6 +112,7 @@ export function InputEmail(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
+        {...inputProps}
         defaultValue={props.defaultValue}
         name={props.inputId}
         type={props.type}
@@ -107,8 +126,20 @@ export function InputEmail(props: InputTextType) {
 }
 
 export function InputDate(props: InputTextType) {
-  const formatted =
-    props.defaultValue && format(new Date(props.defaultValue), 'yyyy-MM-dd');
+  const inputProps: { value?: string; defaultValue?: string } = {};
+
+  const isValidDate = (date: Date) => !isNaN(date.getTime());
+
+  if (props.value !== undefined) {
+    const date = new Date(props.value);
+    inputProps.value = isValidDate(date) ? format(date, 'yyyy-MM-dd') : '';
+  } else if (props.defaultValue !== undefined) {
+    const date = new Date(props.defaultValue);
+    inputProps.defaultValue = isValidDate(date)
+      ? format(date, 'yyyy-MM-dd')
+      : '';
+  }
+
   return (
     <>
       {props.showLabel && (
@@ -118,7 +149,7 @@ export function InputDate(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        defaultValue={formatted}
+        {...inputProps}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -131,9 +162,30 @@ export function InputDate(props: InputTextType) {
 }
 
 export function InputDateTime(props: InputTextType) {
-  const formatted =
-    props.defaultValue &&
-    format(new Date(props.defaultValue), 'YYYY-MM-DDTHH:mm');
+  const inputProps: { value?: string; defaultValue?: string } = {};
+
+  if (props.value !== undefined) {
+    inputProps.value = format(new Date(props.value), 'yyyy-MM-dd');
+  } else if (props.defaultValue !== undefined) {
+    inputProps.defaultValue = format(
+      new Date(props.defaultValue),
+      "yyyy-MM-dd'T'HH:mm",
+    );
+  }
+
+  const isValidDate = (date: Date) => !isNaN(date.getTime());
+
+  if (props.value !== undefined) {
+    const date = new Date(props.value);
+    inputProps.value = isValidDate(date)
+      ? format(new Date(props.value), "yyyy-MM-dd'T'HH:mm")
+      : '';
+  } else if (props.defaultValue !== undefined) {
+    const date = new Date(props.defaultValue);
+    inputProps.defaultValue = isValidDate(date)
+      ? format(new Date(props.defaultValue), "yyyy-MM-dd'T'HH:mm")
+      : '';
+  }
 
   return (
     <>
@@ -144,7 +196,7 @@ export function InputDateTime(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        defaultValue={formatted}
+        {...inputProps}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -157,6 +209,17 @@ export function InputDateTime(props: InputTextType) {
 }
 
 export function InputSelect(props: InputSelectType) {
+  const inputProps: {
+    defaultValue?: string;
+    selectedOptions?: string[];
+  } = {};
+
+  if (props.value !== undefined) {
+    inputProps.selectedOptions = [props.value];
+  } else if (props.defaultValue !== undefined) {
+    inputProps.defaultValue = props.defaultValue;
+  }
+
   return (
     <>
       {props.showLabel && (
@@ -165,11 +228,10 @@ export function InputSelect(props: InputSelectType) {
         </Label>
       )}
       <Dropdown
-        defaultValue={props.defaultValue}
+        {...inputProps}
         id={props.inputId}
         name={props.inputId}
-        clearable
-        placeholder="Select a priority"
+        placeholder={props.placeholder}
       >
         {props.options.map((option) => (
           <Option
@@ -187,6 +249,14 @@ export function InputSelect(props: InputSelectType) {
 }
 
 export function InputTextArea(props: InputTextAreaType) {
+  const inputProps: { value?: string; defaultValue?: string } = {};
+
+  if (props.value !== undefined) {
+    inputProps.value = props.value;
+  } else if (props.defaultValue !== undefined) {
+    inputProps.defaultValue = props.defaultValue;
+  }
+
   return (
     <>
       {props.showLabel && (
@@ -196,7 +266,7 @@ export function InputTextArea(props: InputTextAreaType) {
       )}
       <Textarea
         name={props.inputId}
-        defaultValue={props.defaultValue}
+        {...inputProps}
         onChange={(e) =>
           props.handleChange(props.inputId, e.target.value, props.type)
         }
