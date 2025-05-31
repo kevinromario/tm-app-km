@@ -12,6 +12,7 @@ import {
   MessageBarBody,
 } from '@fluentui/react-components';
 import {
+  useEffect,
   useState,
   type Dispatch,
   type FormEvent,
@@ -37,10 +38,21 @@ type DialogType = {
   onSubmit: (props: FormDataType) => void;
   loading?: boolean;
   error?: string;
+  initialData?: FormDataType;
 };
 
 export default function Dialog(props: DialogType) {
   const [formData, setFormData] = useState<FormDataType>({});
+
+  useEffect(() => {
+    if (props.initialData) {
+      setFormData(props.initialData);
+    }
+  }, [props.initialData]);
+
+  useEffect(() => {
+    setFormData({});
+  }, [props.isOpen]);
 
   const handleChange = (
     name: string,
@@ -86,10 +98,15 @@ export default function Dialog(props: DialogType) {
                 rowGap: '10px',
               }}
             >
-              {props.listColumns.map((column) => {
+              {props.listColumns.map((column, index) => {
                 if (column.type === 'email') {
                   return (
                     <InputEmail
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -102,6 +119,11 @@ export default function Dialog(props: DialogType) {
                 if (column.type === 'date') {
                   return (
                     <InputDate
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -114,6 +136,11 @@ export default function Dialog(props: DialogType) {
                 if (column.type === 'datetime-local') {
                   return (
                     <InputDateTime
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -126,6 +153,11 @@ export default function Dialog(props: DialogType) {
                 if (column.type === 'select') {
                   return (
                     <InputSelect
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -139,6 +171,11 @@ export default function Dialog(props: DialogType) {
                 if (column.type === 'text-area') {
                   return (
                     <InputTextArea
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -151,6 +188,11 @@ export default function Dialog(props: DialogType) {
                 if (column.type === 'array') {
                   return (
                     <InputTag
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string[])
+                      }
                       inputId={column.name}
                       required={Boolean(column.required)}
                       showLabel
@@ -162,6 +204,11 @@ export default function Dialog(props: DialogType) {
 
                 return (
                   <InputText
+                    key={`${column.name}-${index}`}
+                    defaultValue={
+                      props.initialData &&
+                      (props.initialData[column.name] as string)
+                    }
                     inputId={column.name}
                     required={Boolean(column.required)}
                     showLabel

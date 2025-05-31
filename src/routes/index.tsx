@@ -26,12 +26,11 @@ import { useGetTasksList } from '../hooks/useGetTasksList';
 import { useAddNewTask } from '../hooks/useAddNewTask';
 import { useDeleteTask } from '../hooks/useDeleteTask';
 import { useBulkDeleteTasks } from '../hooks/useBulkDeleteTasks';
+import { useUpdateTask } from '../hooks/useUpdateTask';
 
 export const Route = createFileRoute('/')({
   component: Index,
 });
-
-type ItemType = Record<string, unknown>;
 
 const columnsMock: ColumnType[] = [
   {
@@ -85,9 +84,14 @@ function Index() {
   const {
     mutateAsync: addTask,
     isPending,
-    isSuccess,
     error: errorAddNewTask,
   } = useAddNewTask();
+
+  const {
+    mutateAsync: updateTask,
+    isPending: loadingUpdateTask,
+    error: errorUpdateTask,
+  } = useUpdateTask();
 
   const { mutateAsync: deleteTask, isPending: loadingDeleteTask } =
     useDeleteTask();
@@ -97,6 +101,8 @@ function Index() {
 
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
+  const [isEditTask, setIsEditTask] = useState(false);
+  const [initialData, setInitialData] = useState<FormDataType>({});
   const [taskSelected, setTaskSelected] = useState(0);
   const [selectedRows, setSelectedRows] = useState(
     () => new Set<TableRowId>([]),
@@ -105,12 +111,6 @@ function Index() {
   useEffect(() => {
     setTaskSelected(Array.from(selectedRows).length);
   }, [selectedRows]);
-
-  useEffect(() => {
-    if (isSuccess) {
-      console.log('berhasil');
-    }
-  }, [isSuccess]);
 
   const handleFetchNextPage = () => {
     fetchNextPage();
@@ -220,6 +220,47 @@ function Index() {
     );
   };
 
+  const handleEditTask = (index: number) => {
+    setInitialData(tasksList[index]);
+    setIsEditTask(true);
+  };
+
+  const handleSubmitEditTask = async (props: FormDataType) => {
+    try {
+      const updatedFields = Object.entries(props).reduce(
+        (acc, [key, value]) => {
+          if (value !== initialData[key]) {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {} as Partial<typeof props>,
+      );
+
+      if (Object.keys(updatedFields).length === 0) {
+        throw new Error('No changes detected');
+      }
+
+      await updateTask({
+        ...updatedFields,
+        updatedAt: new Date().toISOString(),
+        taskId: initialData.id,
+      });
+
+      setIsEditTask(false);
+      setInitialData({});
+      notify('Successfully Update Task', 'success');
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      notify(error.message, 'error');
+    }
+  };
+
+  useEffect(() => {
+    handleResetSelected();
+  }, [isEditTask]);
+
   return (
     <Container title={renderTitle()} action={renderAction()}>
       <Toaster toasterId={toasterId} />
@@ -241,7 +282,21 @@ function Index() {
         handleFetchNextPage={handleFetchNextPage}
         isFetchingNextPage={isFetchingNextPage}
         loadingDeleteRow={loadingDeleteTask}
+        handleEditRow={handleEditTask}
       />
+      <div style={{ display: 'none' }}>
+        <Dialog
+          isOpen={isEditTask}
+          setIsOpen={setIsEditTask}
+          btnText="Edit Task"
+          title="Edit Task"
+          listColumns={columnsMock}
+          initialData={initialData}
+          onSubmit={handleSubmitEditTask}
+          loading={loadingUpdateTask}
+          error={errorUpdateTask?.message}
+        />
+      </div>
     </Container>
   );
 }
