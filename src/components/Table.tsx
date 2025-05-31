@@ -16,6 +16,8 @@ import {
   createTableColumn,
   Skeleton,
   SkeletonItem,
+  MessageBar,
+  MessageBarBody,
 } from '@fluentui/react-components';
 
 import {
@@ -41,6 +43,7 @@ type TableType = {
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   isLoading: boolean;
+  error?: string;
   // Optional: whether rows can be deleted
   isDeletable?: boolean;
   // Optional: whether rows can be edited
@@ -64,6 +67,7 @@ export default function Table({
   selectedRows,
   setSelectedRows,
   isLoading,
+  error,
 }: TableType) {
   const columns: TableColumnDefinition<ItemType>[] = listColumns.map((item) => {
     return createTableColumn<ItemType>({
@@ -125,6 +129,18 @@ export default function Table({
       >
         <SkeletonItem size={120} />
       </Skeleton>
+    );
+  }
+
+  if (error) {
+    return (
+      <MessageBar
+        key={'error'}
+        intent={'error'}
+        style={{ minHeight: 'fit-content', padding: '10px', marginTop: 10 }}
+      >
+        <MessageBarBody>{error}</MessageBarBody>
+      </MessageBar>
     );
   }
 

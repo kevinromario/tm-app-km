@@ -1,6 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { Title3, Button, type TableRowId } from '@fluentui/react-components';
+import {
+  Title3,
+  Button,
+  type TableRowId,
+  useId,
+  useToastController,
+  Toast,
+  ToastTitle,
+  ToastBody,
+  Toaster,
+} from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
@@ -166,7 +176,7 @@ function Index() {
   const {
     data: taskList,
     isLoading: isLoadingFetchData,
-    error,
+    error: errorFetchTaskList,
   } = useGetTasksList();
   const {
     mutateAsync: addTask,
@@ -174,7 +184,7 @@ function Index() {
     isSuccess,
     error: errorAddNewTask,
   } = useAddNewTask();
-  console.log(taskList, error);
+  console.log(errorAddNewTask);
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -196,11 +206,23 @@ function Index() {
     try {
       await addTask({ ...props, organizationId });
       setIsAddTask(false);
+      notify();
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // do nothing
     }
   };
+
+  const toasterId = useId('toaster');
+  const { dispatchToast } = useToastController(toasterId);
+  const notify = () =>
+    dispatchToast(
+      <Toast>
+        <ToastTitle>Success</ToastTitle>
+        <ToastBody>Successfully Create a New Task</ToastBody>
+      </Toast>,
+      { intent: 'success', position: 'top-end' },
+    );
 
   const handleResetSelected = () => {
     setSelectedRows(() => new Set<TableRowId>([]));
@@ -231,12 +253,14 @@ function Index() {
         listColumns={columnsMock}
         onSubmit={handleSubmitNewTask}
         loading={isPending}
+        error={errorAddNewTask?.message}
       />
     );
   };
 
   return (
     <Container title={renderTitle()} action={renderAction()}>
+      <Toaster toasterId={toasterId} />
       <Filter listColumns={columnsMock} />
       <Table
         items={taskList || []}
@@ -249,6 +273,7 @@ function Index() {
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         isLoading={isLoadingFetchData}
+        error={errorFetchTaskList?.message}
       />
     </Container>
   );

@@ -8,6 +8,8 @@ import {
   DialogActions,
   Button,
   Spinner,
+  MessageBar,
+  MessageBarBody,
 } from '@fluentui/react-components';
 import {
   useState,
@@ -34,7 +36,7 @@ type DialogType = {
   listColumns: ColumnType[];
   onSubmit: (props: FormDataType) => void;
   loading?: boolean;
-  error?: Error | null;
+  error?: string;
 };
 
 export default function Dialog(props: DialogType) {
@@ -164,6 +166,15 @@ export default function Dialog(props: DialogType) {
                   />
                 );
               })}
+              {props.error && (
+                <MessageBar
+                  key={'error'}
+                  intent={'error'}
+                  style={{ minHeight: 'fit-content', padding: '10px' }}
+                >
+                  <MessageBarBody>{props.error}</MessageBarBody>
+                </MessageBar>
+              )}
             </DialogContent>
             <DialogActions>
               <Button
