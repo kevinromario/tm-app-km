@@ -181,62 +181,64 @@ export default function Table({
         </TableHeader>
         {rows.length ? (
           <TableBody>
-            {rows.map(({ item, selected, onClick, onKeyDown, appearance }) => {
-              return (
-                <TableRow
-                  key={item?.id}
-                  onClick={onClick}
-                  onKeyDown={onKeyDown}
-                  aria-selected={selected}
-                  appearance={appearance}
-                >
-                  {isMultiSelect && (
-                    <TableSelectionCell
-                      checked={selected}
-                      checkboxIndicator={{ 'aria-label': 'Select row' }}
-                    />
-                  )}
-                  {listColumns.map((column, index) => {
-                    const key: keyof typeof item = column.name;
-                    return (
-                      <TableCell>
-                        <TableCellLayout>{item[key]}</TableCellLayout>
-                        {(isDeletable || isEditable) &&
-                          columns?.length - 1 === index && (
-                            <TableCellActions>
-                              {isEditable && (
-                                <Button
-                                  icon={<EditIcon />}
-                                  appearance="subtle"
-                                  aria-label="Edit"
-                                />
-                              )}
-                              {isDeletable && (
-                                <Button
-                                  disable={loadingDeleteRow}
-                                  icon={
-                                    loadingDeleteRow ? (
-                                      <Spinner size="tiny" />
-                                    ) : (
-                                      <DeleteIcon />
-                                    )
-                                  }
-                                  appearance="subtle"
-                                  aria-label="More actions"
-                                  onClick={() =>
-                                    handleDeleteRow &&
-                                    handleDeleteRow(item?.id as string)
-                                  }
-                                />
-                              )}
-                            </TableCellActions>
-                          )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
+            {rows.map(
+              ({ item, selected, onClick, onKeyDown, appearance }, idx) => {
+                return (
+                  <TableRow
+                    key={item?.id}
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
+                    aria-selected={selected}
+                    appearance={appearance}
+                  >
+                    {isMultiSelect && (
+                      <TableSelectionCell
+                        checked={selected}
+                        checkboxIndicator={{ 'aria-label': 'Select row' }}
+                      />
+                    )}
+                    {listColumns.map((column, index) => {
+                      const key: keyof typeof item = column.name;
+                      return (
+                        <TableCell key={`${column.name}-${idx}`}>
+                          <TableCellLayout>{item[key]}</TableCellLayout>
+                          {(isDeletable || isEditable) &&
+                            columns?.length - 1 === index && (
+                              <TableCellActions>
+                                {isEditable && (
+                                  <Button
+                                    icon={<EditIcon />}
+                                    appearance="subtle"
+                                    aria-label="Edit"
+                                  />
+                                )}
+                                {isDeletable && (
+                                  <Button
+                                    disable={loadingDeleteRow}
+                                    icon={
+                                      loadingDeleteRow ? (
+                                        <Spinner size="tiny" />
+                                      ) : (
+                                        <DeleteIcon />
+                                      )
+                                    }
+                                    appearance="subtle"
+                                    aria-label="More actions"
+                                    onClick={() =>
+                                      handleDeleteRow &&
+                                      handleDeleteRow(item?.id as string)
+                                    }
+                                  />
+                                )}
+                              </TableCellActions>
+                            )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              },
+            )}
           </TableBody>
         ) : null}
       </ContainerTable>

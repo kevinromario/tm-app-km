@@ -49,6 +49,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'email') {
           return (
             <InputEmail
+              key={column.name}
               inputId={column.name}
               required={false}
               showLabel={false}
@@ -61,6 +62,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'date') {
           return (
             <InputDate
+              key={column.name}
               inputId={column.name}
               required={false}
               showLabel={false}
@@ -73,6 +75,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'datetime-local') {
           return (
             <InputDateTime
+              key={column.name}
               inputId={column.name}
               required={false}
               showLabel={false}
@@ -85,6 +88,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'select') {
           return (
             <InputSelect
+              key={column.name}
               inputId={column.name}
               required={false}
               showLabel={false}
@@ -98,6 +102,7 @@ export default function Filter(props: FilterType) {
         if (column.type === 'text-area') {
           return (
             <InputText
+              key={column.name}
               inputId={column.name}
               required={false}
               showLabel={false}
@@ -110,6 +115,7 @@ export default function Filter(props: FilterType) {
 
         return (
           <InputText
+            key={column.name}
             inputId={column.name}
             required={false}
             showLabel={false}

@@ -10,6 +10,7 @@ import {
   ToastTitle,
   ToastBody,
   Toaster,
+  Spinner,
 } from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
@@ -24,115 +25,13 @@ import Dialog from '../components/Dialog';
 import { useGetTasksList } from '../hooks/useGetTasksList';
 import { useAddNewTask } from '../hooks/useAddNewTask';
 import { useDeleteTask } from '../hooks/useDeleteTask';
+import { useBulkDeleteTasks } from '../hooks/useBulkDeleteTasks';
 
 export const Route = createFileRoute('/')({
   component: Index,
 });
 
 type ItemType = Record<string, unknown>;
-
-const itemsMock: ItemType[] = [
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-  {
-    id: '0000000000000',
-    organizationId: '00000000000',
-    title: 'Meeting Notes',
-    description: 'Meeting with Tenant',
-    dueDate: new Date().toDateString(),
-    priority: 'high',
-    status: 'todo',
-    tags: ['sales'],
-  },
-];
 
 const columnsMock: ColumnType[] = [
   {
@@ -193,6 +92,9 @@ function Index() {
   const { mutateAsync: deleteTask, isPending: loadingDeleteTask } =
     useDeleteTask();
 
+  const { mutateAsync: bulkDeleteTasks, isPending: loadingBulkDeleteTasks } =
+    useBulkDeleteTasks();
+
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -212,6 +114,25 @@ function Index() {
 
   const handleFetchNextPage = () => {
     fetchNextPage();
+  };
+
+  const handleBulkDeleteTasks = async () => {
+    try {
+      const selectedTasks = Array.from(selectedRows);
+      if (selectedTasks.length === 0) {
+        throw new Error('No selected task');
+      }
+      const selectedTasksid = selectedTasks.map(
+        (task) => tasksList[task as number].id as string,
+      );
+      await bulkDeleteTasks({ listId: selectedTasksid });
+
+      notify('Successfully Bulk Delete Task', 'success');
+      handleResetSelected();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      notify(error.message, 'error');
+    }
   };
 
   const handleDeleteRow = async (taskId?: string) => {
@@ -272,8 +193,15 @@ function Index() {
           <Button appearance="primary" onClick={handleResetSelected}>
             Back
           </Button>
-          <Button style={{ marginLeft: '10px' }}>
-            Delete {taskSelected} Task
+          <Button
+            disable={loadingBulkDeleteTasks}
+            style={{ marginLeft: '10px' }}
+            onClick={handleBulkDeleteTasks}
+            icon={loadingBulkDeleteTasks ? <Spinner size="tiny" /> : null}
+          >
+            {loadingBulkDeleteTasks
+              ? 'Loading...'
+              : `Delete ${taskSelected} Task`}
           </Button>
         </div>
       );
