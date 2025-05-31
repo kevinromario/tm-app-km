@@ -166,7 +166,7 @@ function Index() {
   const {
     data: taskList,
     isLoading: isLoadingFetchData,
-    error,
+    error: errorFetchTaskList,
   } = useGetTasksList();
   const {
     mutateAsync: addTask,
@@ -174,7 +174,7 @@ function Index() {
     isSuccess,
     error: errorAddNewTask,
   } = useAddNewTask();
-  console.log(taskList, error);
+  console.log(errorAddNewTask);
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -231,6 +231,7 @@ function Index() {
         listColumns={columnsMock}
         onSubmit={handleSubmitNewTask}
         loading={isPending}
+        error={errorAddNewTask?.message}
       />
     );
   };
@@ -249,6 +250,7 @@ function Index() {
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
         isLoading={isLoadingFetchData}
+        error={errorFetchTaskList?.message}
       />
     </Container>
   );
