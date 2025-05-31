@@ -7,6 +7,7 @@ import {
   DialogBody,
   DialogActions,
   Button,
+  Spinner,
 } from '@fluentui/react-components';
 import {
   useState,
@@ -14,7 +15,7 @@ import {
   type FormEvent,
   type SetStateAction,
 } from 'react';
-import type { ColumnType, FormDataType } from '../constants';
+import type { ColumnType, FieldType, FormDataType } from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -31,6 +32,9 @@ type DialogType = {
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
   listColumns: ColumnType[];
+  onSubmit: (props: FormDataType) => void;
+  loading?: boolean;
+  error?: Error | null;
 };
 
 export default function Dialog(props: DialogType) {
@@ -39,17 +43,23 @@ export default function Dialog(props: DialogType) {
   const handleChange = (
     name: string,
     value: string | number | boolean | string[] | null,
+    type: FieldType,
   ) => {
+    let parsedValue: string | number | boolean | string[] | Date | null = value;
+
+    if (type === 'date' || type === 'datetime-local') {
+      parsedValue = value ? new Date(value as string) : null;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: parsedValue,
     }));
   };
-  const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
 
-    console.log(formData);
-    alert('form submitted!');
+    props.onSubmit(formData);
   };
   return (
     <DialogContainer open={props.isOpen}>
@@ -78,6 +88,7 @@ export default function Dialog(props: DialogType) {
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
@@ -89,18 +100,19 @@ export default function Dialog(props: DialogType) {
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
-                if (column.type === 'date-time') {
+                if (column.type === 'datetime-local') {
                   return (
                     <InputDateTime
                       inputId={column.name}
-                      type="datetime-local"
                       required={Boolean(column.required)}
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
@@ -113,6 +125,7 @@ export default function Dialog(props: DialogType) {
                       placeholder={`Select ${column.label}`}
                       options={column.options || []}
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
@@ -124,6 +137,7 @@ export default function Dialog(props: DialogType) {
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
@@ -134,6 +148,7 @@ export default function Dialog(props: DialogType) {
                       required={Boolean(column.required)}
                       showLabel
                       handleChange={handleChange}
+                      type={column.type}
                     />
                   );
                 }
@@ -145,13 +160,20 @@ export default function Dialog(props: DialogType) {
                     showLabel
                     placeholder={`Input ${column.label}`}
                     handleChange={handleChange}
+                    type="text"
                   />
                 );
               })}
             </DialogContent>
             <DialogActions>
-              <Button type="submit" appearance="primary">
-                Submit
+              <Button
+                type="submit"
+                appearance="primary"
+                disabled={props.loading}
+                isLoading={true}
+                icon={props.loading ? <Spinner size="tiny" /> : null}
+              >
+                {props.loading ? 'Loading' : 'Submit'}
               </Button>
               <DialogTrigger disableButtonEnhancement>
                 <Button

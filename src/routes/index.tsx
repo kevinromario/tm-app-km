@@ -4,9 +4,15 @@ import { Title3, Button, type TableRowId } from '@fluentui/react-components';
 import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
-import type { ColumnType } from '../constants';
+import {
+  organizationId,
+  type ColumnType,
+  type FormDataType,
+} from '../constants';
 import Filter from '../components/Filter';
 import Dialog from '../components/Dialog';
+import { useGetTasksList } from '../hooks/useGetTasksList';
+import { useAddNewTask } from '../hooks/useAddNewTask';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -157,6 +163,14 @@ const columnsMock: ColumnType[] = [
 ];
 
 function Index() {
+  const { data: taskList, isLoading, error } = useGetTasksList();
+  const {
+    mutateAsync: addTask,
+    isPending,
+    isSuccess,
+    error: errorAddNewTask,
+  } = useAddNewTask();
+  console.log(taskList, error);
   const [page, setPage] = useState(1);
   const [isAddTask, setIsAddTask] = useState(false);
   const [taskSelected, setTaskSelected] = useState(0);
@@ -167,6 +181,22 @@ function Index() {
   useEffect(() => {
     setTaskSelected(Array.from(selectedRows).length);
   }, [selectedRows]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log('berhasil');
+    }
+  }, [isSuccess]);
+
+  const handleSubmitNewTask = async (props: FormDataType) => {
+    try {
+      await addTask({ ...props, organizationId });
+      setIsAddTask(false);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      // do nothing
+    }
+  };
 
   const handleResetSelected = () => {
     setSelectedRows(() => new Set<TableRowId>([]));
@@ -195,6 +225,8 @@ function Index() {
         btnText="Add New Task"
         title="Add New Task"
         listColumns={columnsMock}
+        onSubmit={handleSubmitNewTask}
+        loading={isPending}
       />
     );
   };
@@ -203,7 +235,7 @@ function Index() {
     <Container title={renderTitle()} action={renderAction()}>
       <Filter listColumns={columnsMock} />
       <Table
-        items={itemsMock}
+        items={taskList}
         listColumns={columnsMock}
         page={page}
         setPage={setPage}
