@@ -1,5 +1,5 @@
 import { Button } from '@fluentui/react-components';
-import type { ColumnType } from '../constants';
+import type { ColumnType, FormDataType } from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -7,20 +7,40 @@ import {
   InputSelect,
   InputText,
 } from './Input';
+import { useState, type FormEvent } from 'react';
 
 type FilterType = {
   listColumns: ColumnType[];
 };
 
 export default function Filter(props: FilterType) {
+  const [formData, setFormData] = useState<FormDataType>({});
+
+  const handleChange = (
+    name: string,
+    value: string | number | boolean | string[] | null,
+  ) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = (ev: FormEvent<HTMLFormElement>) => {
+    ev.preventDefault();
+
+    console.log(formData);
+    alert('form submitted!');
+  };
+
   return (
-    <div
+    <form
+      onSubmit={handleSubmit}
       style={{
         borderBottom: '1px solid lightGray',
         padding: 10,
         justifyContent: 'space-between',
         display: 'grid',
-        gridTemplateColumns: 'repeat(6, 1fr)',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
         gap: '7px',
       }}
     >
@@ -30,7 +50,10 @@ export default function Filter(props: FilterType) {
           return (
             <InputEmail
               inputId={column.name}
+              required={false}
+              showLabel={false}
               placeholder={`Input ${column.label}`}
+              handleChange={handleChange}
             />
           );
         }
@@ -38,7 +61,10 @@ export default function Filter(props: FilterType) {
           return (
             <InputDate
               inputId={column.name}
+              required={false}
+              showLabel={false}
               placeholder={`Input ${column.label}`}
+              handleChange={handleChange}
             />
           );
         }
@@ -46,8 +72,11 @@ export default function Filter(props: FilterType) {
           return (
             <InputDateTime
               inputId={column.name}
+              required={false}
+              showLabel={false}
               type="datetime-local"
               placeholder={`Input ${column.label}`}
+              handleChange={handleChange}
             />
           );
         }
@@ -55,8 +84,11 @@ export default function Filter(props: FilterType) {
           return (
             <InputSelect
               inputId={column.name}
+              required={false}
+              showLabel={false}
               placeholder={`Select ${column.label}`}
               options={column.options || []}
+              handleChange={handleChange}
             />
           );
         }
@@ -64,7 +96,10 @@ export default function Filter(props: FilterType) {
           return (
             <InputText
               inputId={column.name}
+              required={false}
+              showLabel={false}
               placeholder={`Input ${column.label}`}
+              handleChange={handleChange}
             />
           );
         }
@@ -72,7 +107,10 @@ export default function Filter(props: FilterType) {
         return (
           <InputText
             inputId={column.name}
+            required={false}
+            showLabel={false}
             placeholder={`Input ${column.label}`}
+            handleChange={handleChange}
           />
         );
       })}
@@ -83,8 +121,10 @@ export default function Filter(props: FilterType) {
           justifyContent: 'flex-start',
         }}
       >
-        <Button appearance="primary">Search</Button>
+        <Button type="submit" appearance="primary">
+          Search
+        </Button>
       </div>
-    </div>
+    </form>
   );
 }
