@@ -157,19 +157,21 @@ function DraggableCol({
       >
         {RenderComponent(col)}
       </div>
-      <Button
-        appearance="subtle"
-        style={{ position: 'absolute', top: 4, right: 4 }}
-        size="small"
-        onPointerDown={(e: { stopPropagation: () => void }) => {
-          e.stopPropagation();
-        }}
-        onClick={(e: { stopPropagation: () => void }) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        icon={<DeleteIcon />}
-      />
+      {col.isMandatory ? null : (
+        <Button
+          appearance="subtle"
+          style={{ position: 'absolute', top: 4, right: 4 }}
+          size="small"
+          onPointerDown={(e: { stopPropagation: () => void }) => {
+            e.stopPropagation();
+          }}
+          onClick={(e: { stopPropagation: () => void }) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          icon={<DeleteIcon />}
+        />
+      )}
     </div>
   );
 }
