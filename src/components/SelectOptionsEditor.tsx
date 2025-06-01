@@ -60,7 +60,7 @@ export function SelectOptionsEditor({
             value={newOption}
             placeholder="Add new option"
             onChange={(e) => setNewOption(e.target.value)}
-            onKeyDown={(e) => {
+            onKeyDown={(e: { key: string }) => {
               if (e.key === 'Enter') handleAddOption();
             }}
           />
