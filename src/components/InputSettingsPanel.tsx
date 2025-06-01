@@ -29,7 +29,7 @@ export function InputSettingsPanel({ component, onChange }: Props) {
 
   useEffect(() => {
     if (component) {
-      setName(component.name);
+      setName(component.label);
       setIsRequired(component.isRequired);
       setIsFilterable(component.isFilterable);
       setOptions(component.options);
@@ -122,16 +122,18 @@ export function InputSettingsPanel({ component, onChange }: Props) {
         checked={isFilterable}
         onChange={(_, d) => handleChangeCheckbox(d, 'isFilterable')}
       />
-      <div>
-        <Label>Options</Label>
-        <SelectOptionsEditor
-          disabled={component.isMandatory}
-          options={options || []}
-          onOptionsChange={(newOptions) => {
-            handleChangeOptions(newOptions);
-          }}
-        />
-      </div>
+      {component.type === 'select' ? (
+        <div>
+          <Label>Options</Label>
+          <SelectOptionsEditor
+            disabled={component.isMandatory}
+            options={options || []}
+            onOptionsChange={(newOptions) => {
+              handleChangeOptions(newOptions);
+            }}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -19,7 +19,9 @@ import {
   MessageBar,
   MessageBarBody,
   Spinner,
+  Text,
 } from '@fluentui/react-components';
+import { format, parseISO, isValid } from 'date-fns';
 
 import {
   EditRegular,
@@ -35,6 +37,33 @@ import type { ColumnTable } from '../constants';
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const renderCellValue = (value: any) => {
+  if (!value) return '-';
+  if (Array.isArray(value)) {
+    return value.length ? value.join(', ') : '-';
+  }
+  if (typeof value === 'string') {
+    const date = parseISO(value);
+    const isDate =
+      isValid(date) && value.length >= 10 && !isNaN(date.getTime());
+
+    if (isDate) {
+      const hasTime = value.includes('T') || value.includes(':');
+      return (
+        <Text>
+          {hasTime
+            ? format(date, 'dd MMMM yyyy HH:mm')
+            : format(date, 'dd MMMM yyyy')}
+        </Text>
+      );
+    }
+
+    return <Text>{value.charAt(0).toUpperCase() + value.slice(1)}</Text>;
+  }
+  return <Text>{value}</Text>;
+};
 
 type ItemType = Record<string, unknown>;
 
@@ -203,7 +232,9 @@ export default function Table({
                       const key: keyof typeof item = column.name;
                       return (
                         <TableCell key={`${column.name}-${idx}`}>
-                          <TableCellLayout>{item[key]}</TableCellLayout>
+                          <TableCellLayout>
+                            {renderCellValue(item[key])}
+                          </TableCellLayout>
                           {(isDeletable || isEditable) &&
                             columns?.length - 1 === index && (
                               <TableCellActions>
