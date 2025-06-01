@@ -40,15 +40,13 @@ export default function FormBuilder() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveType(null);
-    const { active, over } = event;
+    const { over, active } = event;
     if (!over || !active.data?.current) return;
 
-    const isFromPalette = active.data.current?.from !== 'canvas';
+    const draggedType = active.data.current.type as string;
+    const isNew = active.data.current.isNew === true; // Flag kalau dari palette
 
-    if (isFromPalette) {
-      const draggedType = active.data.current.type as string;
-      if (!draggedType) return;
-
+    if (isNew) {
       const newComponent: InputComponent = {
         id: uuidv4(),
         type: draggedType as FieldType,
@@ -71,23 +69,45 @@ export default function FormBuilder() {
         }
         return { rows: updated };
       });
-    } else {
-      setFormStructure((prev) => {
-        const updatedRows = prev.rows.map((row) => {
-          const activeIndex = row.columns.findIndex(
-            (col) => col.id === active.id,
-          );
-          const overIndex = row.columns.findIndex((col) => col.id === over.id);
-          if (activeIndex === -1 || overIndex === -1) return row;
-
-          const newCols = [...row.columns];
-          const [moved] = newCols.splice(activeIndex, 1);
-          newCols.splice(overIndex, 0, moved);
-          return { ...row, columns: newCols };
-        });
-        return { rows: updatedRows };
-      });
+      return;
     }
+
+    setFormStructure((prev) => {
+      const updatedRows = [...prev.rows];
+
+      let fromRowIndex = -1;
+      let toRowIndex = -1;
+      let draggedComponent: InputComponent | undefined;
+
+      updatedRows.forEach((row, rowIndex) => {
+        row.columns.forEach((col) => {
+          if (col.id === active.id) {
+            fromRowIndex = rowIndex;
+            draggedComponent = col;
+          }
+          if (col.id === over.id) {
+            toRowIndex = rowIndex;
+          }
+        });
+      });
+
+      if (!draggedComponent || fromRowIndex === -1 || toRowIndex === -1)
+        return prev;
+
+      updatedRows[fromRowIndex].columns = updatedRows[
+        fromRowIndex
+      ].columns.filter((col) => col.id !== active.id);
+
+      const overIndex = updatedRows[toRowIndex].columns.findIndex(
+        (col) => col.id === over.id,
+      );
+
+      updatedRows[toRowIndex].columns.splice(overIndex, 0, draggedComponent);
+
+      const cleanedRows = updatedRows.filter((row) => row.columns.length > 0);
+
+      return { rows: cleanedRows };
+    });
   };
 
   function handleDragStart(event: DragStartEvent) {

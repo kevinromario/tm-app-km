@@ -42,7 +42,7 @@ function PaletteItem({ type }: { type: FieldType }) {
   const item = { name: '', icon: <></> };
   const { attributes, listeners, setNodeRef } = useDraggable({
     id: `palette-${type}`,
-    data: { type },
+    data: { type, isNew: true },
   });
 
   if (type === 'datetime-local') {
