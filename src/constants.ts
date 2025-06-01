@@ -22,7 +22,7 @@ export type InputType = 'text' | 'number' | 'date';
 
 export interface InputComponent {
   id: string;
-  type: InputType;
+  type: FieldType;
   name: string;
   isRequired: boolean;
   isFilterable: boolean;
