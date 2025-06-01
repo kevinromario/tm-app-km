@@ -176,10 +176,12 @@ export function InputCanvas({
 
   const handleDelete = (id: string) => {
     setFormStructure((prev) => ({
-      rows: prev.rows.map((row: FormRow) => ({
-        ...row,
-        columns: row.columns.filter((col) => (col?.id === id ? null : col)),
-      })),
+      rows: prev.rows
+        .map((row: FormRow) => ({
+          ...row,
+          columns: row.columns.filter((col) => col?.id !== id),
+        }))
+        .filter((row) => row.columns.length > 0), // Hapus row kosong
     }));
   };
 
