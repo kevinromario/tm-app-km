@@ -209,7 +209,7 @@ export function InputDateTime(props: InputTextType) {
       <Input
         {...inputProps}
         id={props.name}
-        disabled
+        disabled={props.disabled}
         name={props.name}
         type={props.type}
         placeholder={props.placeholder}

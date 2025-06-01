@@ -34,7 +34,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         handleChange={() => null}
         type={props.type}
@@ -46,7 +46,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         type={props.type}
         handleChange={() => null}
@@ -59,7 +59,7 @@ function RenderComponent(props: InputComponent) {
         type={props.type}
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         handleChange={() => null}
       />
@@ -70,7 +70,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         type={props.type}
         handleChange={() => null}
@@ -81,7 +81,7 @@ function RenderComponent(props: InputComponent) {
       <InputSelect
         disabled
         showLabel
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         required={false}
         type={props.type}
@@ -95,7 +95,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         type={props.type}
         handleChange={() => null}
@@ -107,7 +107,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        label={props.label}
+        label={`${props.label} (${props.type})`}
         name={props.name}
         type={props.type}
         handleChange={() => null}

@@ -29,9 +29,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { useSaveFormSetting } from '../hooks/useSaveFormSetting';
 import DragItem from './DragItem';
 import { camelCase } from 'change-case';
+import { useGetFormSetting } from '../hooks/useGetFormSetting';
 
 export default function FormBuilder() {
   const [activeType, setActiveType] = useState(null);
+  const { data: formSetting } = useGetFormSetting();
   const { mutateAsync: saveFormSetting, isPending: isLoading } =
     useSaveFormSetting();
   const [formStructure, setFormStructure] = useState<FormStructure>({
@@ -41,8 +43,20 @@ export default function FormBuilder() {
     useState<InputComponent | null>(null);
 
   useEffect(() => {
-    setFormStructure(MandatoryFormNColumn.form);
-  }, []);
+    const FormAndColumn = {
+      form: {
+        rows: [
+          ...(MandatoryFormNColumn.form.rows || []),
+          ...(formSetting?.form.rows || []),
+        ],
+      },
+      columnsTable: [
+        ...(MandatoryFormNColumn.columnsTable || []),
+        ...(formSetting?.columnsTable || []),
+      ],
+    };
+    setFormStructure(FormAndColumn.form);
+  }, [formSetting]);
 
   const handleSave = async () => {
     try {

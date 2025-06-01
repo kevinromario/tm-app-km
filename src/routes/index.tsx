@@ -13,9 +13,10 @@ import {
   Spinner,
 } from '@fluentui/react-components';
 import Container from '../components/Container';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Table from '../components/Table';
 import {
+  type FormNColumnStructure,
   MandatoryFormNColumn,
   organizationId,
   type FilterDataType,
@@ -28,6 +29,7 @@ import { useAddNewTask } from '../hooks/useAddNewTask';
 import { useDeleteTask } from '../hooks/useDeleteTask';
 import { useBulkDeleteTasks } from '../hooks/useBulkDeleteTasks';
 import { useUpdateTask } from '../hooks/useUpdateTask';
+import { useGetFormSetting } from '../hooks/useGetFormSetting';
 
 export const Route = createFileRoute('/')({
   component: Index,
@@ -35,6 +37,25 @@ export const Route = createFileRoute('/')({
 
 function Index() {
   const [filter, setFilter] = useState<FilterDataType>({});
+
+  const { data: formSetting, isLoading: isLoadingFetchFormSetting } =
+    useGetFormSetting();
+
+  const FormAndColumn: FormNColumnStructure = useMemo(() => {
+    return {
+      form: {
+        rows: [
+          ...(MandatoryFormNColumn.form.rows || []),
+          ...(formSetting?.form.rows || []),
+        ],
+      },
+      columnsTable: [
+        ...(MandatoryFormNColumn.columnsTable || []),
+        ...(formSetting?.columnsTable || []),
+      ],
+    };
+  }, [formSetting]);
+
   const {
     tasksList,
     fetchNextPage,
@@ -179,7 +200,7 @@ function Index() {
         setIsOpen={setIsAddTask}
         btnText="Add New Task"
         title="Add New Task"
-        listForms={MandatoryFormNColumn.form}
+        listForms={FormAndColumn.form}
         onSubmit={handleSubmitNewTask}
         loading={isPending}
         error={errorAddNewTask?.message}
@@ -233,11 +254,11 @@ function Index() {
       <Toaster toasterId={toasterId} />
       <Filter
         onSubmit={handleSubmitFilter}
-        listColumns={MandatoryFormNColumn.columnsTable}
+        listColumns={FormAndColumn.columnsTable}
       />
       <Table
         items={tasksList || []}
-        listColumns={MandatoryFormNColumn.columnsTable}
+        listColumns={FormAndColumn.columnsTable}
         page={page}
         setPage={setPage}
         isEditable
@@ -246,7 +267,7 @@ function Index() {
         isMultiSelect
         selectedRows={selectedRows}
         setSelectedRows={setSelectedRows}
-        isLoading={isLoadingFetchData}
+        isLoading={isLoadingFetchData || isLoadingFetchFormSetting}
         error={errorFetchTaskList?.message}
         hasNextPage={hasNextPage}
         handleFetchNextPage={handleFetchNextPage}
@@ -260,7 +281,7 @@ function Index() {
           setIsOpen={setIsEditTask}
           btnText="Edit Task"
           title="Edit Task"
-          listForms={MandatoryFormNColumn.form}
+          listForms={FormAndColumn.form}
           initialData={initialData}
           onSubmit={handleSubmitEditTask}
           loading={loadingUpdateTask}
