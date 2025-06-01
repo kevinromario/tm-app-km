@@ -104,7 +104,7 @@ export default function Table({
       selectionMode: isMultiSelect ? 'multiselect' : 'single',
       ...(selectedRows && { selectedItems: selectedRows }),
       ...(setSelectedRows && {
-        onSelectionChange: (e, data) => setSelectedRows(data.selectedItems),
+        onSelectionChange: (_e, data) => setSelectedRows(data.selectedItems),
       }),
     }),
   ]);

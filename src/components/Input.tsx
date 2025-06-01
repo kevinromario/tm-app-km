@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Dropdown,
   Option,
@@ -278,7 +279,10 @@ export function InputTextArea(props: InputTextAreaType) {
 export function InputTag(props: InputTagType) {
   const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
-  const onOptionSelect: TagPickerProps['onOptionSelect'] = (_, data) => {
+  const onOptionSelect: TagPickerProps['onOptionSelect'] = (
+    _: any,
+    data: any,
+  ) => {
     setSelectedOptions(data.selectedOptions);
   };
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
