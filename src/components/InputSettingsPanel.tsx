@@ -1,7 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import type { InputComponent } from '../constants';
-import { Input, Label } from '@fluentui/react-components';
+import {
+  Checkbox,
+  Input,
+  Label,
+  type CheckboxOnChangeData,
+} from '@fluentui/react-components';
 import { camelCase } from 'change-case';
+import { SelectOptionsEditor } from './SelectOptionsEditor';
 
 interface Props {
   component: InputComponent | null;
@@ -10,11 +16,23 @@ interface Props {
 
 export function InputSettingsPanel({ component, onChange }: Props) {
   const [name, setName] = useState(component?.name || '');
+  const [isRequired, setIsRequired] = useState(component?.isRequired || false);
+  const [isFilterable, setIsFilterable] = useState(
+    component?.isFilterable || false,
+  );
+  const [options, setOptions] = useState<string[] | undefined>(
+    component?.options,
+  );
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRefSecond = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timeoutRefThird = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (component) {
       setName(component.name);
+      setIsRequired(component.isRequired);
+      setIsFilterable(component.isFilterable);
+      setOptions(component.options);
     }
   }, [component]);
 
@@ -33,6 +51,49 @@ export function InputSettingsPanel({ component, onChange }: Props) {
     }, 500);
   };
 
+  const handleChangeCheckbox = (
+    d: CheckboxOnChangeData,
+    change: 'isRequired' | 'isFilterable',
+  ) => {
+    const checked = d.checked;
+
+    if (timeoutRefSecond.current && change === 'isFilterable') {
+      clearTimeout(timeoutRefSecond.current);
+    }
+
+    if (timeoutRefThird.current && change === 'isRequired') {
+      clearTimeout(timeoutRefThird.current);
+    }
+
+    if (change === 'isFilterable') {
+      setIsFilterable(Boolean(checked));
+      timeoutRefSecond.current = setTimeout(() => {
+        onChange({
+          ...component,
+          name,
+          isRequired,
+          isFilterable: Boolean(checked),
+        });
+      }, 500);
+    }
+    if (change === 'isRequired') {
+      setIsRequired(Boolean(checked));
+      timeoutRefThird.current = setTimeout(() => {
+        onChange({
+          ...component,
+          name,
+          isFilterable,
+          isRequired: Boolean(checked),
+        });
+      }, 500);
+    }
+  };
+
+  const handleChangeOptions = (newOptions: string[]) => {
+    onChange({ ...component, options: newOptions });
+    setOptions(newOptions);
+  };
+
   return (
     <div
       style={{
@@ -43,33 +104,34 @@ export function InputSettingsPanel({ component, onChange }: Props) {
       }}
     >
       <Label>Name</Label>
-      <Input value={name} onChange={handleChange} />
-      {/* TODO: Improvement to support colspan and required */}
-      {/* <Label>Column Span</Label>
-      <Dropdown
-        value={String(component.colSpan)}
-        onOptionSelect={(_, data) => {
-          const span = parseInt(data.optionValue || '1') as 1 | 2;
-          onChange({ ...component, colSpan: span });
-        }}
-      >
-        <Option value="1">1 Column</Option>
-        <Option value="2">2 Columns</Option>
-      </Dropdown> */}
-      {/* <Checkbox
+      <Input
+        disabled={component.isMandatory}
+        value={name}
+        onChange={handleChange}
+      />
+
+      <Checkbox
         label="Required"
-        checked={component.isRequired}
-        onChange={(_, d) =>
-          onChange({ ...component, isRequired: d.checked ?? false })
-        }
+        disabled={component.isMandatory}
+        checked={isRequired}
+        onChange={(_, d) => handleChangeCheckbox(d, 'isRequired')}
       />
       <Checkbox
         label="Filterable"
-        checked={component.isFilterable}
-        onChange={(_, d) =>
-          onChange({ ...component, isFilterable: d.checked ?? false })
-        }
-      /> */}
+        disabled={component.isMandatory}
+        checked={isFilterable}
+        onChange={(_, d) => handleChangeCheckbox(d, 'isFilterable')}
+      />
+      <div>
+        <Label>Options</Label>
+        <SelectOptionsEditor
+          disabled={component.isMandatory}
+          options={options || []}
+          onOptionsChange={(newOptions) => {
+            handleChangeOptions(newOptions);
+          }}
+        />
+      </div>
     </div>
   );
 }
