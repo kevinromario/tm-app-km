@@ -59,7 +59,10 @@ export default function FormBuilder() {
         colSpan: 1,
       };
 
-      let updated = [...prev.rows];
+      const updated = prev.rows.map((row) => ({
+        ...row,
+        columns: [...row.columns],
+      }));
       const lastRow = updated[updated.length - 1];
       if (!lastRow || lastRow.columns.length >= 2) {
         updated.push({ id: uuidv4(), columns: [newComponent] });
