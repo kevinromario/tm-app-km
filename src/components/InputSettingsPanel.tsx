@@ -29,7 +29,7 @@ export function InputSettingsPanel({ component, onChange }: Props) {
     }
 
     timeoutRef.current = setTimeout(() => {
-      onChange({ ...component, title: value, name: camelCase(value) });
+      onChange({ ...component, label: value, name: camelCase(value) });
     }, 500);
   };
 

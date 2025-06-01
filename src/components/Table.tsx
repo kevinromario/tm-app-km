@@ -30,7 +30,7 @@ import {
 } from '@fluentui/react-icons';
 
 import { useCallback, type Dispatch, type SetStateAction } from 'react';
-import type { ColumnType } from '../constants';
+import type { ColumnTable } from '../constants';
 
 const EditIcon = bundleIcon(EditFilled, EditRegular);
 
@@ -40,7 +40,7 @@ type ItemType = Record<string, unknown>;
 
 type TableType = {
   items: ItemType[];
-  listColumns: ColumnType[];
+  listColumns: ColumnTable[];
   handleDeleteRow?: (id?: string) => void;
   handleEditRow?: (index: number) => void;
   // Required for pagination Offset-based

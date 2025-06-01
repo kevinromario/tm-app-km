@@ -34,7 +34,8 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         handleChange={() => null}
         type={props.type}
       />
@@ -45,7 +46,8 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         type={props.type}
         handleChange={() => null}
       />
@@ -57,7 +59,8 @@ function RenderComponent(props: InputComponent) {
         type={props.type}
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         handleChange={() => null}
       />
     );
@@ -67,7 +70,8 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         type={props.type}
         handleChange={() => null}
       />
@@ -77,7 +81,8 @@ function RenderComponent(props: InputComponent) {
       <InputSelect
         disabled
         showLabel
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         required={false}
         type={props.type}
         handleChange={() => null}
@@ -90,7 +95,8 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         type={props.type}
         handleChange={() => null}
       />
@@ -101,7 +107,8 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.title}
+        label={props.label}
+        name={props.name}
         type={props.type}
         handleChange={() => null}
       />
@@ -127,7 +134,7 @@ function DraggableCol({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    flex: col.colSpan,
+    flex: 1,
     border: '1px solid #ccc',
     padding: '8px',
     minHeight: '60px',

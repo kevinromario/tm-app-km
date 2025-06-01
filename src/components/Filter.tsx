@@ -1,6 +1,6 @@
 import { Button } from '@fluentui/react-components';
 import type {
-  ColumnType,
+  ColumnTable,
   FieldType,
   FilterDataType,
   FormDataType,
@@ -15,7 +15,7 @@ import {
 import { useState, type FormEvent } from 'react';
 
 type FilterType = {
-  listColumns: ColumnType[];
+  listColumns: ColumnTable[];
   onSubmit: (props: FilterDataType) => void;
 };
 
@@ -69,18 +69,20 @@ export default function Filter(props: FilterType) {
       }}
     >
       {props.listColumns.map((column) => {
-        if (!column.filterable) return;
+        if (!column.isFilterable) return;
         if (column.type === 'email') {
           return (
             <InputEmail
               value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
-              required={false}
+              required={column.isRequired}
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
-              type="email"
+              type={column.type}
+              name={column.name}
+              label={column.label}
             />
           );
         }
@@ -90,11 +92,13 @@ export default function Filter(props: FilterType) {
               value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
-              required={false}
+              required={column.isRequired}
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
-              type="date"
+              type={column.type}
+              name={column.name}
+              label={column.label}
             />
           );
         }
@@ -104,11 +108,13 @@ export default function Filter(props: FilterType) {
               value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
-              required={false}
+              required={column.isRequired}
               showLabel={false}
-              type="datetime-local"
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
+              type={column.type}
+              name={column.name}
+              label={column.label}
             />
           );
         }
@@ -117,13 +123,14 @@ export default function Filter(props: FilterType) {
             <InputSelect
               value={(formData[column.name] as string) ?? ''}
               key={column.name}
-              inputId={column.name}
-              required={false}
+              name={column.name}
+              required={column.isRequired}
               showLabel={false}
               placeholder={`Select ${column.label}`}
               options={column.options || []}
               handleChange={handleChange}
-              type="select"
+              type={column.type}
+              label={column.label}
             />
           );
         }
@@ -133,11 +140,13 @@ export default function Filter(props: FilterType) {
               value={(formData[column.name] as string) ?? ''}
               key={column.name}
               inputId={column.name}
-              required={false}
+              required={column.isRequired}
               showLabel={false}
               placeholder={`Input ${column.label}`}
               handleChange={handleChange}
               type="text"
+              name={column.name}
+              label={column.label}
             />
           );
         }
@@ -147,11 +156,13 @@ export default function Filter(props: FilterType) {
             value={(formData[column.name] as string) ?? ''}
             key={column.name}
             inputId={column.name}
-            required={false}
+            required={column.isRequired}
             showLabel={false}
             placeholder={`Input ${column.label}`}
             handleChange={handleChange}
             type="text"
+            name={column.name}
+            label={column.label}
           />
         );
       })}

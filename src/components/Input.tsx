@@ -27,7 +27,8 @@ type HandleChangeType = (
 
 type InputTextType = InputProps & {
   placeholder?: string;
-  inputId: string;
+  name: string;
+  label: string;
   required: boolean;
   showLabel: boolean;
   handleChange: HandleChangeType;
@@ -37,7 +38,8 @@ type InputTextType = InputProps & {
 
 type InputTextAreaType = TextareaProps & {
   placeholder?: string;
-  inputId: string;
+  name: string;
+  label: string;
   required: boolean;
   showLabel: boolean;
   handleChange: HandleChangeType;
@@ -47,7 +49,8 @@ type InputTextAreaType = TextareaProps & {
 
 type InputSelectType = {
   placeholder?: string;
-  inputId: string;
+  name: string;
+  label: string;
   options: string[];
   required: boolean;
   showLabel: boolean;
@@ -59,7 +62,8 @@ type InputSelectType = {
 };
 
 type InputTagType = {
-  inputId: string;
+  name: string;
+  label: string;
   required: boolean;
   showLabel: boolean;
   handleChange: HandleChangeType;
@@ -81,18 +85,19 @@ export function InputText(props: InputTextType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Input
-        id={props.inputId}
+        {...inputProps}
+        id={props.name}
         disabled={props.disabled}
-        name={props.inputId}
+        name={props.name}
         type={props.type}
         placeholder={props.placeholder}
         onChange={(e) =>
-          props.handleChange(props.inputId, e.target.value, props.type)
+          props.handleChange(props.name, e.target.value, props.type)
         }
       />
     </div>
@@ -111,19 +116,20 @@ export function InputEmail(props: InputTextType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Input
-        id={props.inputId}
+        {...inputProps}
+        id={props.name}
         disabled={props.disabled}
         defaultValue={props.defaultValue}
-        name={props.inputId}
+        name={props.name}
         type={props.type}
         placeholder={props.placeholder}
         onChange={(e) =>
-          props.handleChange(props.inputId, e.target.value, props.type)
+          props.handleChange(props.name, e.target.value, props.type)
         }
       />
     </div>
@@ -148,18 +154,19 @@ export function InputDate(props: InputTextType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Input
-        id={props.inputId}
+        {...inputProps}
+        id={props.name}
         disabled={props.disabled}
-        name={props.inputId}
+        name={props.name}
         type={props.type}
         placeholder={props.placeholder}
         onChange={(e) =>
-          props.handleChange(props.inputId, e.target.value, props.type)
+          props.handleChange(props.name, e.target.value, props.type)
         }
       />
     </div>
@@ -195,18 +202,19 @@ export function InputDateTime(props: InputTextType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Input
-        id={props.inputId}
+        {...inputProps}
+        id={props.name}
         disabled
-        name={props.inputId}
+        name={props.name}
         type={props.type}
         placeholder={props.placeholder}
         onChange={(e) =>
-          props.handleChange(props.inputId, e.target.value, props.type)
+          props.handleChange(props.name, e.target.value, props.type)
         }
       />
     </div>
@@ -218,7 +226,7 @@ export function InputSelect(props: InputSelectType) {
     defaultValue?: string;
     selectedOptions?: string[];
   } = {};
-
+  console.log(props.name, props.value);
   if (props.value !== undefined) {
     inputProps.selectedOptions = [props.value];
   } else if (props.defaultValue !== undefined) {
@@ -228,21 +236,20 @@ export function InputSelect(props: InputSelectType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Dropdown
+        {...inputProps}
         disabled={props.disabled}
-        id={props.inputId}
-        name={props.inputId}
+        id={props.name}
+        name={props.name}
         placeholder={props.placeholder}
       >
         {props.options.map((option) => (
           <Option
-            onClick={() =>
-              props.handleChange(props.inputId, option, props.type)
-            }
+            onClick={() => props.handleChange(props.name, option, props.type)}
             key={option}
           >
             {option}
@@ -265,15 +272,16 @@ export function InputTextArea(props: InputTextAreaType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <Textarea
-        name={props.inputId}
+        {...inputProps}
+        name={props.name}
         disabled={props.disabled}
         onChange={(e) =>
-          props.handleChange(props.inputId, e.target.value, props.type)
+          props.handleChange(props.name, e.target.value, props.type)
         }
       />
     </div>
@@ -297,7 +305,7 @@ export function InputTag(props: InputTagType) {
       setInputValue('');
       setSelectedOptions((curr) => {
         props.handleChange(
-          props.inputId,
+          props.name,
           curr.includes(inputValue) ? curr : [...curr, inputValue],
           props.type,
         );
@@ -315,14 +323,14 @@ export function InputTag(props: InputTagType) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
-        <Label required={props.required} htmlFor={`${props.inputId}-input`}>
-          {props.inputId}
+        <Label required={props.required} htmlFor={`${props.name}-input`}>
+          {props.label}
         </Label>
       )}
       <TagPicker
-        id={props.inputId}
+        id={props.name}
         disabled={props.disabled}
-        name={props.inputId}
+        name={props.name}
         noPopover
         onOptionSelect={onOptionSelect}
         selectedOptions={selectedOptions}
