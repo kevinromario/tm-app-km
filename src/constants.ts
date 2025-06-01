@@ -31,7 +31,7 @@ export interface InputComponent {
 
 export interface FormRow {
   id: string;
-  columns: (InputComponent | null)[];
+  columns: (InputComponent)[];
 }
 
 export interface FormStructure {

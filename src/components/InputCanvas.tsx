@@ -12,6 +12,12 @@ import {
 } from './Input';
 import { DeleteRegular, DeleteFilled, bundleIcon } from '@fluentui/react-icons';
 import type { Dispatch, SetStateAction } from 'react';
+import {
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const DeleteIcon = bundleIcon(DeleteFilled, DeleteRegular);
 
@@ -22,7 +28,6 @@ interface Props {
 }
 
 function RenderComponent(props: InputComponent) {
-  console.log(props);
   if (props.type === 'array') {
     return (
       <InputTag
@@ -104,6 +109,58 @@ function RenderComponent(props: InputComponent) {
   }
 }
 
+function DraggableCol({
+  col,
+  onClick,
+  onDelete,
+}: {
+  col: InputComponent;
+  onClick: () => void;
+  onDelete: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
+      id: col.id,
+      data: { id: col.id, type: col.type, from: 'canvas' },
+    });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    flex: col.colSpan,
+    border: '1px solid #ccc',
+    padding: '8px',
+    minHeight: '60px',
+    backgroundColor: 'white',
+    cursor: 'move',
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ position: 'relative', ...style }}
+      {...attributes}
+      {...listeners}
+      onClick={onClick}
+    >
+      {RenderComponent(col)}
+      <Button
+        appearance="subtle"
+        style={{ position: 'absolute', top: 4, right: 4 }}
+        size="small"
+        onPointerDown={(e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+        }}
+        onClick={(e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        icon={<DeleteIcon />}
+      />
+    </div>
+  );
+}
+
 export function InputCanvas({
   formStructure,
   setFormStructure,
@@ -115,7 +172,7 @@ export function InputCanvas({
     setFormStructure((prev) => ({
       rows: prev.rows.map((row: FormRow) => ({
         ...row,
-        columns: row.columns.map((col) => (col?.id === id ? null : col)),
+        columns: row.columns.filter((col) => (col?.id === id ? null : col)),
       })),
     }));
   };
@@ -130,40 +187,24 @@ export function InputCanvas({
         gap: '8px',
       }}
     >
-      {formStructure.rows.map((row, i) => {
-        let usedCols = 0;
+      {formStructure.rows.map((row) => {
         return (
           <div key={row.id} style={{ display: 'flex', gap: '8px' }}>
-            {row.columns.map((col, j) => {
-              if (!col) return null;
-              usedCols += col.colSpan;
-              return (
-                <div
-                  key={col.id}
-                  style={{
-                    flex: col.colSpan,
-                    border: '1px solid #ccc',
-                    padding: '8px',
-                    minHeight: '60px',
-                    position: 'relative',
-                    backgroundColor: 'white',
-                  }}
-                  onClick={() => setSelectedComponent(col)}
-                >
-                  {RenderComponent(col)}
-                  <Button
-                    appearance="subtle"
-                    style={{ position: 'absolute', top: 4, right: 4 }}
-                    size="small"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(col.id);
-                    }}
-                    icon={<DeleteIcon />}
+            <SortableContext
+              items={row.columns.map((c) => c.id)}
+              strategy={verticalListSortingStrategy}
+            >
+              {row.columns.map((col) => {
+                return (
+                  <DraggableCol
+                    key={col?.id}
+                    col={col}
+                    onClick={() => setSelectedComponent(col)}
+                    onDelete={() => handleDelete(col.id)}
                   />
-                </div>
-              );
-            })}
+                );
+              })}
+            </SortableContext>
           </div>
         );
       })}

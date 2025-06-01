@@ -8,7 +8,7 @@ import {
 import { InputPalette } from './InputPalette';
 import { InputCanvas } from './InputCanvas';
 import { InputSettingsPanel } from './InputSettingsPanel';
-import type { FormStructure, InputComponent } from '../constants';
+import type { FieldType, FormStructure, InputComponent } from '../constants';
 import { Button } from '@fluentui/react-components';
 import { v4 as uuidv4 } from 'uuid';
 import { useSaveFormSetting } from '../hooks/useSaveFormSetting';
@@ -25,15 +25,12 @@ export default function FormBuilder() {
   const [formStructure, setFormStructure] = useState<FormStructure>({
     rows: [],
   });
-  console.log('formStructure: ', formStructure);
   const [selectedComponent, setSelectedComponent] =
     useState<InputComponent | null>(null);
 
   const handleSave = async () => {
     try {
-      console.log(formStructure);
       const res = await saveFormSetting(formStructure);
-      console.log(formStructure);
       if (res.ok) alert('Form saved successfully!');
     } catch (err) {
       console.error(err);
@@ -43,34 +40,54 @@ export default function FormBuilder() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveType(null);
-    const { over, active } = event;
+    const { active, over } = event;
     if (!over || !active.data?.current) return;
 
-    const draggedType = active.data.current.type as string;
-    if (!draggedType) return;
+    const isFromPalette = active.data.current?.from !== 'canvas';
 
-    setFormStructure((prev) => {
+    if (isFromPalette) {
+      const draggedType = active.data.current.type as string;
+      if (!draggedType) return;
+
       const newComponent: InputComponent = {
         id: uuidv4(),
-        type: draggedType as any,
+        type: draggedType as FieldType,
         name: `${draggedType}-${Date.now()}`,
         isRequired: false,
         isFilterable: false,
         colSpan: 1,
       };
 
-      const updated = prev.rows.map((row) => ({
-        ...row,
-        columns: [...row.columns],
-      }));
-      const lastRow = updated[updated.length - 1];
-      if (!lastRow || lastRow.columns.length >= 2) {
-        updated.push({ id: uuidv4(), columns: [newComponent] });
-      } else {
-        lastRow.columns.push(newComponent);
-      }
-      return { rows: updated };
-    });
+      setFormStructure((prev) => {
+        const updated = prev.rows.map((row) => ({
+          ...row,
+          columns: [...row.columns],
+        }));
+        const lastRow = updated[updated.length - 1];
+        if (!lastRow || lastRow.columns.length >= 2) {
+          updated.push({ id: uuidv4(), columns: [newComponent] });
+        } else {
+          lastRow.columns.push(newComponent);
+        }
+        return { rows: updated };
+      });
+    } else {
+      setFormStructure((prev) => {
+        const updatedRows = prev.rows.map((row) => {
+          const activeIndex = row.columns.findIndex(
+            (col) => col.id === active.id,
+          );
+          const overIndex = row.columns.findIndex((col) => col.id === over.id);
+          if (activeIndex === -1 || overIndex === -1) return row;
+
+          const newCols = [...row.columns];
+          const [moved] = newCols.splice(activeIndex, 1);
+          newCols.splice(overIndex, 0, moved);
+          return { ...row, columns: newCols };
+        });
+        return { rows: updatedRows };
+      });
+    }
   };
 
   function handleDragStart(event: DragStartEvent) {
