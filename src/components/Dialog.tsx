@@ -270,7 +270,14 @@ export default function Dialog(props: DialogType) {
                             row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
                         }}
                       >
-                        <InputText {...commonProps} type="text" />
+                        <InputText
+                          {...commonProps}
+                          defaultValue={
+                            props.initialData &&
+                            (props.initialData[column.name] as string)
+                          }
+                          type="text"
+                        />
                       </div>
                     );
                   })}
