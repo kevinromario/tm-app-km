@@ -142,7 +142,6 @@ export default function Dialog(props: DialogType) {
                 >
                   {row.columns.map((column) => {
                     const commonProps = {
-                      key: `${column.name}-${rowIndex}`,
                       required: Boolean(column.isRequired),
                       showLabel: true,
                       placeholder: `Input ${column.label}`,
@@ -157,6 +156,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'email')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -175,6 +175,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'date')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -193,6 +194,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'datetime-local')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -211,6 +213,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'select')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -230,6 +233,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'text-area')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -248,6 +252,7 @@ export default function Dialog(props: DialogType) {
                     if (column.type === 'array')
                       return (
                         <div
+                          key={`${column.name}-${rowIndex}`}
                           style={{
                             flex:
                               row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
@@ -265,6 +270,7 @@ export default function Dialog(props: DialogType) {
 
                     return (
                       <div
+                        key={`${column.name}-${rowIndex}`}
                         style={{
                           flex:
                             row.columns.length === 1 ? '1 0 100%' : '1 0 48%',
