@@ -100,7 +100,9 @@ export default function FormBuilder() {
   ) =>
     dispatchToast(
       <Toast>
-        <ToastTitle>{intent}</ToastTitle>
+        <ToastTitle>
+          {intent.charAt(0).toUpperCase() + intent.slice(1)}
+        </ToastTitle>
         <ToastBody>{message}</ToastBody>
       </Toast>,
       { intent, position: 'top-end' },

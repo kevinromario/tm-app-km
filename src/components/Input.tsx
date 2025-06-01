@@ -251,7 +251,7 @@ export function InputSelect(props: InputSelectType) {
             onClick={() => props.handleChange(props.name, option, props.type)}
             key={option}
           >
-            {option}
+            {option.charAt(0).toUpperCase() + option.slice(1)}
           </Option>
         ))}
       </Dropdown>
