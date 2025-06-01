@@ -23,8 +23,8 @@ This is the frontend for the Task Manager application, built using **React**, **
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-org/your-repo.git
-cd your-repo
+git clone https://github.com/kevinromario/tm-app-km.git
+cd tm-app-km
 ```
 
 ### 2. Install dependencies
@@ -84,7 +84,3 @@ This project is deployed on **Vercel**. On push to the main branch, Vercel autom
 Live URL: [https://tm-app-km.vercel.app/](https://tm-app-km.vercel.app/)
 
 ---
-
-## 📄 License
-
-MIT — feel free to use and modify.
