@@ -7,7 +7,7 @@ import {
   MenuTrigger,
   Text,
 } from '@fluentui/react-components';
-import { useState, type Dispatch, type SetStateAction } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
 
 import {
   bundleIcon,
