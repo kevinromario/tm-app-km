@@ -32,6 +32,7 @@ type InputTextType = InputProps & {
   showLabel: boolean;
   handleChange: HandleChangeType;
   type: FieldType;
+  disabled?: boolean;
 };
 
 type InputTextAreaType = TextareaProps & {
@@ -41,6 +42,7 @@ type InputTextAreaType = TextareaProps & {
   showLabel: boolean;
   handleChange: HandleChangeType;
   type: FieldType;
+  disabled?: boolean;
 };
 
 type InputSelectType = {
@@ -53,6 +55,7 @@ type InputSelectType = {
   type: FieldType;
   defaultValue?: string;
   value?: string;
+  disabled?: boolean;
 };
 
 type InputTagType = {
@@ -63,6 +66,7 @@ type InputTagType = {
   type: FieldType;
   defaultValue?: string[];
   value?: string;
+  disabled?: boolean;
 };
 
 export function InputText(props: InputTextType) {
@@ -75,7 +79,7 @@ export function InputText(props: InputTextType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -83,7 +87,7 @@ export function InputText(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        {...inputProps}
+        disabled={props.disabled}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -91,7 +95,7 @@ export function InputText(props: InputTextType) {
           props.handleChange(props.inputId, e.target.value, props.type)
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -105,7 +109,7 @@ export function InputEmail(props: InputTextType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -113,7 +117,7 @@ export function InputEmail(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        {...inputProps}
+        disabled={props.disabled}
         defaultValue={props.defaultValue}
         name={props.inputId}
         type={props.type}
@@ -122,7 +126,7 @@ export function InputEmail(props: InputTextType) {
           props.handleChange(props.inputId, e.target.value, props.type)
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -142,7 +146,7 @@ export function InputDate(props: InputTextType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -150,7 +154,7 @@ export function InputDate(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        {...inputProps}
+        disabled={props.disabled}
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -158,7 +162,7 @@ export function InputDate(props: InputTextType) {
           props.handleChange(props.inputId, e.target.value, props.type)
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -189,7 +193,7 @@ export function InputDateTime(props: InputTextType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -197,7 +201,7 @@ export function InputDateTime(props: InputTextType) {
       )}
       <Input
         id={props.inputId}
-        {...inputProps}
+        disabled
         name={props.inputId}
         type={props.type}
         placeholder={props.placeholder}
@@ -205,7 +209,7 @@ export function InputDateTime(props: InputTextType) {
           props.handleChange(props.inputId, e.target.value, props.type)
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -222,14 +226,14 @@ export function InputSelect(props: InputSelectType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
         </Label>
       )}
       <Dropdown
-        {...inputProps}
+        disabled={props.disabled}
         id={props.inputId}
         name={props.inputId}
         placeholder={props.placeholder}
@@ -245,7 +249,7 @@ export function InputSelect(props: InputSelectType) {
           </Option>
         ))}
       </Dropdown>
-    </>
+    </div>
   );
 }
 
@@ -259,7 +263,7 @@ export function InputTextArea(props: InputTextAreaType) {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -267,12 +271,12 @@ export function InputTextArea(props: InputTextAreaType) {
       )}
       <Textarea
         name={props.inputId}
-        {...inputProps}
+        disabled={props.disabled}
         onChange={(e) =>
           props.handleChange(props.inputId, e.target.value, props.type)
         }
       />
-    </>
+    </div>
   );
 }
 
@@ -309,7 +313,7 @@ export function InputTag(props: InputTagType) {
   }, [props.defaultValue]);
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', rowGap: '10px' }}>
       {props.showLabel && (
         <Label required={props.required} htmlFor={`${props.inputId}-input`}>
           {props.inputId}
@@ -317,6 +321,7 @@ export function InputTag(props: InputTagType) {
       )}
       <TagPicker
         id={props.inputId}
+        disabled={props.disabled}
         name={props.inputId}
         noPopover
         onOptionSelect={onOptionSelect}
@@ -342,6 +347,6 @@ export function InputTag(props: InputTagType) {
           />
         </TagPickerControl>
       </TagPicker>
-    </>
+    </div>
   );
 }

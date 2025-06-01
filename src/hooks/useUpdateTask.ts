@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { organizationId, type FormDataType } from "../constants";
 
 export const updateTask = async (data: FormDataType) => {
-
     const response = await axios.post('/UpdateTask', data, { params: { organizationId, taskId: data.taskId } });
     return response.data;
 };
