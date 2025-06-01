@@ -31,8 +31,6 @@ cd tm-app-km
 
 ```bash
 npm install
-# or
-yarn
 ```
 
 ### 3. Set up environment variables
