@@ -141,9 +141,15 @@ function DraggableCol({
       style={{ position: 'relative', ...style }}
       {...attributes}
       {...listeners}
-      onClick={onClick}
     >
-      {RenderComponent(col)}
+      <div
+        onClick={onClick}
+        onPointerDown={(e: { stopPropagation: () => void }) => {
+          e.stopPropagation();
+        }}
+      >
+        {RenderComponent(col)}
+      </div>
       <Button
         appearance="subtle"
         style={{ position: 'absolute', top: 4, right: 4 }}
