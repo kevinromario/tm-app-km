@@ -19,5 +19,4 @@ export type ColumnType = {
 
 export const pageSizeList = [5, 10]
 export const organizationId = "7be52161-fde0-447d-b5fe-d154f9671b89"
-export const backendUrl = "http://localhost:7071/api"
-// export const backendUrl = "https://tm-app-km.azurewebsites.net/api"
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;;
