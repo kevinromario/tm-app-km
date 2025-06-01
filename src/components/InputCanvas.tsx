@@ -34,7 +34,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         handleChange={() => null}
         type={props.type}
       />
@@ -45,7 +45,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         type={props.type}
         handleChange={() => null}
       />
@@ -57,7 +57,7 @@ function RenderComponent(props: InputComponent) {
         type={props.type}
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         handleChange={() => null}
       />
     );
@@ -67,7 +67,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         type={props.type}
         handleChange={() => null}
       />
@@ -77,7 +77,7 @@ function RenderComponent(props: InputComponent) {
       <InputSelect
         disabled
         showLabel
-        inputId={props.name}
+        inputId={props.title}
         required={false}
         type={props.type}
         handleChange={() => null}
@@ -90,7 +90,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         type={props.type}
         handleChange={() => null}
       />
@@ -101,7 +101,7 @@ function RenderComponent(props: InputComponent) {
         disabled
         showLabel
         required={false}
-        inputId={props.name}
+        inputId={props.title}
         type={props.type}
         handleChange={() => null}
       />

@@ -9,19 +9,25 @@ import { InputPalette } from './InputPalette';
 import { InputCanvas } from './InputCanvas';
 import { InputSettingsPanel } from './InputSettingsPanel';
 import type { FieldType, FormStructure, InputComponent } from '../constants';
-import { Button } from '@fluentui/react-components';
+import {
+  Button,
+  Spinner,
+  Toast,
+  ToastBody,
+  Toaster,
+  ToastTitle,
+  useId,
+  useToastController,
+} from '@fluentui/react-components';
 import { v4 as uuidv4 } from 'uuid';
 import { useSaveFormSetting } from '../hooks/useSaveFormSetting';
 import DragItem from './DragItem';
+import { camelCase } from 'change-case';
 
 export default function FormBuilder() {
   const [activeType, setActiveType] = useState(null);
-  const {
-    mutateAsync: saveFormSetting,
-    isLoading,
-    isSuccess,
-    isError,
-  } = useSaveFormSetting();
+  const { mutateAsync: saveFormSetting, isPending: isLoading } =
+    useSaveFormSetting();
   const [formStructure, setFormStructure] = useState<FormStructure>({
     rows: [],
   });
@@ -30,13 +36,27 @@ export default function FormBuilder() {
 
   const handleSave = async () => {
     try {
-      const res = await saveFormSetting(formStructure);
-      if (res.ok) alert('Form saved successfully!');
-    } catch (err) {
-      console.error(err);
-      alert('Gagal menyimpan form');
+      await saveFormSetting(formStructure);
+      notify('Successfully Save', 'success');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+      notify(err.message, 'error');
     }
   };
+
+  const toasterId = useId('toaster');
+  const { dispatchToast } = useToastController(toasterId);
+  const notify = (
+    message: string,
+    intent: 'error' | 'info' | 'warning' | 'success',
+  ) =>
+    dispatchToast(
+      <Toast>
+        <ToastTitle>{intent}</ToastTitle>
+        <ToastBody>{message}</ToastBody>
+      </Toast>,
+      { intent, position: 'top-end' },
+    );
 
   const handleDragEnd = (event: DragEndEvent) => {
     setActiveType(null);
@@ -50,7 +70,8 @@ export default function FormBuilder() {
       const newComponent: InputComponent = {
         id: uuidv4(),
         type: draggedType as FieldType,
-        name: `${draggedType}-${Date.now()}`,
+        name: camelCase(`${draggedType}-${Date.now()}`),
+        title: `${draggedType}-${Date.now()}`,
         isRequired: false,
         isFilterable: false,
         colSpan: 1,
@@ -93,6 +114,10 @@ export default function FormBuilder() {
 
       if (!draggedComponent || fromRowIndex === -1 || toRowIndex === -1)
         return prev;
+
+      if (updatedRows[toRowIndex].columns.length >= 2) {
+        return prev;
+      }
 
       updatedRows[fromRowIndex].columns = updatedRows[
         fromRowIndex
@@ -154,14 +179,21 @@ export default function FormBuilder() {
               }));
             }}
           />
-          <Button onClick={handleSave} appearance="primary">
-            Save
+          <Button
+            onClick={handleSave}
+            appearance="primary"
+            disabled={isLoading}
+            isLoading={true}
+            icon={isLoading ? <Spinner size="tiny" /> : null}
+          >
+            {isLoading ? 'Loading' : 'Submit'}
           </Button>
         </div>
       </div>
       <DragOverlay>
         {activeType ? <DragItem type={activeType} /> : null}
       </DragOverlay>
+      <Toaster toasterId={toasterId} />
     </DndContext>
   );
 }

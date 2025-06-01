@@ -18,6 +18,7 @@
     "@tanstack/react-router": "^1.120.11",
     "@tanstack/react-router-devtools": "^1.120.11",
     "axios": "^1.9.0",
+    "change-case": "^5.4.4",
     "date-fns": "^4.1.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

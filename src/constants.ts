@@ -24,6 +24,7 @@ export interface InputComponent {
   id: string;
   type: FieldType;
   name: string;
+  title: string;
   isRequired: boolean;
   isFilterable: boolean;
   colSpan: 1 | 2;
