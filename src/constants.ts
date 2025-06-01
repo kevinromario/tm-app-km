@@ -9,13 +9,13 @@ export type FilterDataType = {
   [x: string]: FieldValue;
 };
 
-export type ColumnType = {
+export type ColumnTable = {
   name: string;
   label: string;
   type: FieldType;
-  options?: Array<string>;
-  required?: boolean;
-  filterable?: boolean;
+  options?: string[];
+  isRequired: boolean;
+  isFilterable: boolean;
 };
 
 export type InputType = 'text' | 'number' | 'date';
@@ -24,10 +24,12 @@ export interface InputComponent {
   id: string;
   type: FieldType;
   name: string;
-  title: string;
+  label: string;
   isRequired: boolean;
   isFilterable: boolean;
-  colSpan: 1 | 2;
+  isMandatory: boolean;
+  options?: string[];
+  colSpan?: 1 | 2
 }
 
 export interface FormRow {

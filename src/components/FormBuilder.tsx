@@ -71,9 +71,10 @@ export default function FormBuilder() {
         id: uuidv4(),
         type: draggedType as FieldType,
         name: camelCase(`${draggedType}-${Date.now()}`),
-        title: `${draggedType}-${Date.now()}`,
+        label: `${draggedType}-${Date.now()}`,
         isRequired: false,
         isFilterable: false,
+        isMandatory: false,
         colSpan: 1,
       };
 

@@ -18,7 +18,7 @@ import {
   type FormEvent,
   type SetStateAction,
 } from 'react';
-import type { ColumnType, FieldType, FormDataType } from '../constants';
+import type { ColumnTable, FieldType, FormDataType } from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -34,7 +34,7 @@ type DialogType = {
   title: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  listColumns: ColumnType[];
+  listColumns: ColumnTable[];
   onSubmit: (props: FormDataType) => void;
   loading?: boolean;
   error?: string;
@@ -108,11 +108,13 @@ export default function Dialog(props: DialogType) {
                         (props.initialData[column.name] as string)
                       }
                       inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -125,11 +127,13 @@ export default function Dialog(props: DialogType) {
                         (props.initialData[column.name] as string)
                       }
                       inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -142,11 +146,13 @@ export default function Dialog(props: DialogType) {
                         (props.initialData[column.name] as string)
                       }
                       inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -158,13 +164,14 @@ export default function Dialog(props: DialogType) {
                         props.initialData &&
                         (props.initialData[column.name] as string)
                       }
-                      inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       placeholder={`Select ${column.label}`}
                       options={column.options || []}
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -177,11 +184,13 @@ export default function Dialog(props: DialogType) {
                         (props.initialData[column.name] as string)
                       }
                       inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       placeholder={`Input ${column.label}`}
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -193,11 +202,12 @@ export default function Dialog(props: DialogType) {
                         props.initialData &&
                         (props.initialData[column.name] as string[])
                       }
-                      inputId={column.name}
-                      required={Boolean(column.required)}
+                      required={Boolean(column.isRequired)}
                       showLabel
                       handleChange={handleChange}
                       type={column.type}
+                      name={column.name}
+                      label={column.label}
                     />
                   );
                 }
@@ -210,11 +220,13 @@ export default function Dialog(props: DialogType) {
                       (props.initialData[column.name] as string)
                     }
                     inputId={column.name}
-                    required={Boolean(column.required)}
+                    required={Boolean(column.isRequired)}
                     showLabel
                     placeholder={`Input ${column.label}`}
                     handleChange={handleChange}
                     type="text"
+                    name={column.name}
+                    label={column.label}
                   />
                 );
               })}

@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import Table from '../components/Table';
 import {
   organizationId,
-  type ColumnType,
+  type ColumnTable,
   type FilterDataType,
   type FormDataType,
 } from '../constants';
@@ -33,43 +33,51 @@ export const Route = createFileRoute('/')({
   component: Index,
 });
 
-const columnsMock: ColumnType[] = [
+const columnsMock: ColumnTable[] = [
   {
     name: 'title',
     label: 'Title',
     type: 'text',
-    required: true,
-    filterable: true,
+    isRequired: true,
+    isFilterable: true,
   },
   {
     name: 'description',
     label: 'Description',
     type: 'text-area',
-    filterable: true,
+    isRequired: false,
+    isFilterable: true,
   },
   {
     name: 'dueDate',
     label: 'Due Date',
     type: 'date',
-    filterable: true,
+    isRequired: false,
+    isFilterable: true,
   },
   {
     name: 'priority',
     label: 'Priority',
     type: 'select',
     options: ['low', 'medium', 'high'],
-    required: true,
-    filterable: true,
+    isRequired: false,
+    isFilterable: true,
   },
   {
     name: 'status',
     label: 'Status',
     type: 'select',
     options: ['todo', 'in-progress', 'completed'],
-    required: true,
-    filterable: true,
+    isRequired: true,
+    isFilterable: true,
   },
-  { name: 'tags', label: 'Tags', type: 'array', filterable: true },
+  {
+    name: 'tags',
+    label: 'Tags',
+    type: 'array',
+    isRequired: false,
+    isFilterable: true,
+  },
 ];
 
 function Index() {
