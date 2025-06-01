@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -8,7 +8,13 @@ import {
 import { InputPalette } from './InputPalette';
 import { InputCanvas } from './InputCanvas';
 import { InputSettingsPanel } from './InputSettingsPanel';
-import type { FieldType, FormStructure, InputComponent } from '../constants';
+import {
+  MandatoryFormNColumn,
+  type FieldType,
+  type FormNColumnStructure,
+  type FormStructure,
+  type InputComponent,
+} from '../constants';
 import {
   Button,
   Spinner,
@@ -34,9 +40,37 @@ export default function FormBuilder() {
   const [selectedComponent, setSelectedComponent] =
     useState<InputComponent | null>(null);
 
+  useEffect(() => {
+    setFormStructure(MandatoryFormNColumn.form);
+  }, []);
+
   const handleSave = async () => {
     try {
-      await saveFormSetting(formStructure);
+      if (MandatoryFormNColumn.form.rows.length >= formStructure.rows.length) {
+        throw new Error(
+          'Please add at least one non-mandatory field before saving',
+        );
+      }
+
+      const startIdx = MandatoryFormNColumn.form.rows.length;
+
+      const payload: FormNColumnStructure = {
+        form: {
+          rows: formStructure.rows.slice(startIdx),
+        },
+        columnsTable: formStructure.rows.slice(startIdx).flatMap((row) =>
+          row.columns.map((col) => ({
+            name: col.name,
+            label: col.label,
+            type: col.type,
+            options: col.options,
+            isRequired: col.isRequired,
+            isFilterable: col.isFilterable,
+          })),
+        ),
+      };
+
+      await saveFormSetting(payload);
       notify('Successfully Save', 'success');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
@@ -84,7 +118,7 @@ export default function FormBuilder() {
           columns: [...row.columns],
         }));
         const lastRow = updated[updated.length - 1];
-        if (!lastRow || lastRow.columns.length >= 2) {
+        if (!lastRow || lastRow.columns.length >= 2 || updated.length <= 2) {
           updated.push({ id: uuidv4(), columns: [newComponent] });
         } else {
           lastRow.columns.push(newComponent);
@@ -115,6 +149,14 @@ export default function FormBuilder() {
 
       if (!draggedComponent || fromRowIndex === -1 || toRowIndex === -1)
         return prev;
+
+      if (fromRowIndex === 0 || fromRowIndex === 1) {
+        return prev;
+      }
+
+      if (toRowIndex === 0 || toRowIndex === 1) {
+        return prev;
+      }
 
       if (updatedRows[toRowIndex].columns.length >= 2) {
         return prev;
