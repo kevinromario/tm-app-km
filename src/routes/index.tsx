@@ -16,8 +16,8 @@ import Container from '../components/Container';
 import { useEffect, useState } from 'react';
 import Table from '../components/Table';
 import {
+  MandatoryFormNColumn,
   organizationId,
-  type ColumnTable,
   type FilterDataType,
   type FormDataType,
 } from '../constants';
@@ -32,53 +32,6 @@ import { useUpdateTask } from '../hooks/useUpdateTask';
 export const Route = createFileRoute('/')({
   component: Index,
 });
-
-const columnsMock: ColumnTable[] = [
-  {
-    name: 'title',
-    label: 'Title',
-    type: 'text',
-    isRequired: true,
-    isFilterable: true,
-  },
-  {
-    name: 'description',
-    label: 'Description',
-    type: 'text-area',
-    isRequired: false,
-    isFilterable: true,
-  },
-  {
-    name: 'dueDate',
-    label: 'Due Date',
-    type: 'date',
-    isRequired: false,
-    isFilterable: true,
-  },
-  {
-    name: 'priority',
-    label: 'Priority',
-    type: 'select',
-    options: ['low', 'medium', 'high'],
-    isRequired: false,
-    isFilterable: true,
-  },
-  {
-    name: 'status',
-    label: 'Status',
-    type: 'select',
-    options: ['todo', 'in-progress', 'completed'],
-    isRequired: true,
-    isFilterable: true,
-  },
-  {
-    name: 'tags',
-    label: 'Tags',
-    type: 'array',
-    isRequired: false,
-    isFilterable: true,
-  },
-];
 
 function Index() {
   const [filter, setFilter] = useState<FilterDataType>({});
@@ -226,7 +179,7 @@ function Index() {
         setIsOpen={setIsAddTask}
         btnText="Add New Task"
         title="Add New Task"
-        listColumns={columnsMock}
+        listForms={MandatoryFormNColumn.form}
         onSubmit={handleSubmitNewTask}
         loading={isPending}
         error={errorAddNewTask?.message}
@@ -278,10 +231,13 @@ function Index() {
   return (
     <Container title={renderTitle()} action={renderAction()}>
       <Toaster toasterId={toasterId} />
-      <Filter onSubmit={handleSubmitFilter} listColumns={columnsMock} />
+      <Filter
+        onSubmit={handleSubmitFilter}
+        listColumns={MandatoryFormNColumn.columnsTable}
+      />
       <Table
         items={tasksList || []}
-        listColumns={columnsMock}
+        listColumns={MandatoryFormNColumn.columnsTable}
         page={page}
         setPage={setPage}
         isEditable
@@ -304,7 +260,7 @@ function Index() {
           setIsOpen={setIsEditTask}
           btnText="Edit Task"
           title="Edit Task"
-          listColumns={columnsMock}
+          listForms={MandatoryFormNColumn.form}
           initialData={initialData}
           onSubmit={handleSubmitEditTask}
           loading={loadingUpdateTask}
