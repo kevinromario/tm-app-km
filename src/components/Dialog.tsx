@@ -18,7 +18,7 @@ import {
   type FormEvent,
   type SetStateAction,
 } from 'react';
-import type { ColumnTable, FieldType, FormDataType } from '../constants';
+import type { FieldType, FormDataType, FormStructure } from '../constants';
 import {
   InputDate,
   InputDateTime,
@@ -34,7 +34,7 @@ type DialogType = {
   title: string;
   isOpen: boolean;
   setIsOpen: Dispatch<SetStateAction<boolean>>;
-  listColumns: ColumnTable[];
+  listForms: FormStructure;
   onSubmit: (props: FormDataType) => void;
   loading?: boolean;
   error?: string;
@@ -43,16 +43,22 @@ type DialogType = {
 
 export default function Dialog(props: DialogType) {
   const [formData, setFormData] = useState<FormDataType>({});
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (props.initialData) {
-      setFormData(props.initialData);
+    if (props.isOpen) {
+      if (props.initialData && Object.keys(props.initialData).length > 0) {
+        setFormData(props.initialData);
+      } else {
+        setFormData({});
+      }
+      setError(undefined);
     }
-  }, [props.initialData]);
+  }, [props.isOpen]);
 
   useEffect(() => {
-    setFormData({});
-  }, [props.isOpen]);
+    setError(props.error);
+  }, [props.error]);
 
   const handleChange = (
     name: string,
@@ -73,11 +79,37 @@ export default function Dialog(props: DialogType) {
   const handleSubmit = async (ev: FormEvent<HTMLFormElement>) => {
     ev.preventDefault();
     try {
+      const missingFields: string[] = [];
+
+      props.listForms.rows.forEach((row) => {
+        row.columns.forEach((component) => {
+          if (component.isRequired) {
+            const value = formData[component.name];
+            const isEmpty =
+              value === undefined ||
+              value === null ||
+              (typeof value === 'string' && value.trim() === '') ||
+              (Array.isArray(value) && value.length === 0);
+
+            if (isEmpty) {
+              missingFields.push(component.label || component.name);
+            }
+          }
+        });
+      });
+
+      if (missingFields.length > 0) {
+        const message = `Please fill in the required fields: ${missingFields.join(', ')}`;
+        setError(message);
+        return;
+      }
+
       props.onSubmit(formData);
       setFormData({});
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      setError(undefined);
     } catch (error) {
-      //
+      console.error(error);
+      setError('Something went wrong while submitting the form.');
     }
   };
   return (
@@ -98,145 +130,147 @@ export default function Dialog(props: DialogType) {
                 rowGap: '10px',
               }}
             >
-              {props.listColumns.map((column, index) => {
-                if (column.type === 'email') {
-                  return (
-                    <InputEmail
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string)
-                      }
-                      inputId={column.name}
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      placeholder={`Input ${column.label}`}
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
-                if (column.type === 'date') {
-                  return (
-                    <InputDate
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string)
-                      }
-                      inputId={column.name}
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      placeholder={`Input ${column.label}`}
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
-                if (column.type === 'datetime-local') {
-                  return (
-                    <InputDateTime
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string)
-                      }
-                      inputId={column.name}
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      placeholder={`Input ${column.label}`}
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
-                if (column.type === 'select') {
-                  return (
-                    <InputSelect
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string)
-                      }
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      placeholder={`Select ${column.label}`}
-                      options={column.options || []}
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
-                if (column.type === 'text-area') {
-                  return (
-                    <InputTextArea
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string)
-                      }
-                      inputId={column.name}
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      placeholder={`Input ${column.label}`}
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
-                if (column.type === 'array') {
-                  return (
-                    <InputTag
-                      key={`${column.name}-${index}`}
-                      defaultValue={
-                        props.initialData &&
-                        (props.initialData[column.name] as string[])
-                      }
-                      required={Boolean(column.isRequired)}
-                      showLabel
-                      handleChange={handleChange}
-                      type={column.type}
-                      name={column.name}
-                      label={column.label}
-                    />
-                  );
-                }
+              {props.listForms.rows.map((row, index) => {
+                return row.columns.map((column) => {
+                  if (column.type === 'email') {
+                    return (
+                      <InputEmail
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string)
+                        }
+                        inputId={column.name}
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        placeholder={`Input ${column.label}`}
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
+                  if (column.type === 'date') {
+                    return (
+                      <InputDate
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string)
+                        }
+                        inputId={column.name}
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        placeholder={`Input ${column.label}`}
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
+                  if (column.type === 'datetime-local') {
+                    return (
+                      <InputDateTime
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string)
+                        }
+                        inputId={column.name}
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        placeholder={`Input ${column.label}`}
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
+                  if (column.type === 'select') {
+                    return (
+                      <InputSelect
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string)
+                        }
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        placeholder={`Select ${column.label}`}
+                        options={column.options || []}
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
+                  if (column.type === 'text-area') {
+                    return (
+                      <InputTextArea
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string)
+                        }
+                        inputId={column.name}
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        placeholder={`Input ${column.label}`}
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
+                  if (column.type === 'array') {
+                    return (
+                      <InputTag
+                        key={`${column.name}-${index}`}
+                        defaultValue={
+                          props.initialData &&
+                          (props.initialData[column.name] as string[])
+                        }
+                        required={Boolean(column.isRequired)}
+                        showLabel
+                        handleChange={handleChange}
+                        type={column.type}
+                        name={column.name}
+                        label={column.label}
+                      />
+                    );
+                  }
 
-                return (
-                  <InputText
-                    key={`${column.name}-${index}`}
-                    defaultValue={
-                      props.initialData &&
-                      (props.initialData[column.name] as string)
-                    }
-                    inputId={column.name}
-                    required={Boolean(column.isRequired)}
-                    showLabel
-                    placeholder={`Input ${column.label}`}
-                    handleChange={handleChange}
-                    type="text"
-                    name={column.name}
-                    label={column.label}
-                  />
-                );
+                  return (
+                    <InputText
+                      key={`${column.name}-${index}`}
+                      defaultValue={
+                        props.initialData &&
+                        (props.initialData[column.name] as string)
+                      }
+                      inputId={column.name}
+                      required={Boolean(column.isRequired)}
+                      showLabel
+                      placeholder={`Input ${column.label}`}
+                      handleChange={handleChange}
+                      type="text"
+                      name={column.name}
+                      label={column.label}
+                    />
+                  );
+                });
               })}
-              {props.error && (
+              {error && (
                 <MessageBar
                   key={'error'}
                   intent={'error'}
                   style={{ minHeight: 'fit-content', padding: '10px' }}
                 >
-                  <MessageBarBody>{props.error}</MessageBarBody>
+                  <MessageBarBody>{error}</MessageBarBody>
                 </MessageBar>
               )}
             </DialogContent>

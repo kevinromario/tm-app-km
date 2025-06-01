@@ -226,7 +226,6 @@ export function InputSelect(props: InputSelectType) {
     defaultValue?: string;
     selectedOptions?: string[];
   } = {};
-  console.log(props.name, props.value);
   if (props.value !== undefined) {
     inputProps.selectedOptions = [props.value];
   } else if (props.defaultValue !== undefined) {
